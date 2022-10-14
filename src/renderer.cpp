@@ -15,7 +15,8 @@ namespace cpuRE {
   Renderer::Renderer() : camera_(std::make_shared<Camera>()),
     manipulator_(std::make_shared<Manipulator>()) {
     manipulator_->camera(camera_);
-    geometry_ = createTriangleGeometry();
+    // geometry_ = createTriangleGeometry();
+    geometry_ = createIcosahedronGeometry();
   }
 
   void Renderer::render() {

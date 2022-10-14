@@ -64,8 +64,8 @@ namespace cpuRE {
     center_(0.f, 0.f, 0.f),
     offset_(0.f, 0.f, 0.f),
     rotation_(glm::identity<glm::quat>()),
-    trackballSize_(0.8f),
-    rotate_speed_(3.f),
+    trackballSize_(6.0f),
+    rotate_speed_(15.f),
     rotate_center_(false),
     wheelZoomFactor_(0.2f),
     minimumDistance_(0.01f),
@@ -210,7 +210,8 @@ namespace cpuRE {
 
     glm::vec2 curr_point;
     camera_->windowToProject(curr_point.x, curr_point.y, x, y);
-    bool flag = rotateTrackball(curr_point, pressed_point_);
+
+    rotateTrackball(curr_point, pressed_point_);
 
     pressed_point_ = curr_point;
   }

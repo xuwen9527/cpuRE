@@ -9,7 +9,7 @@
 #include "context.h"
 
 namespace cpuRE {
-  template <typename VertexShader>
+  template <typename VertexShader, typename PrimitiveType>
   struct GeometryStage {
     static void triangle(const glm::vec4& p1, const glm::vec4& p2,
                          const glm::vec4& p3, Context& context,
@@ -42,12 +42,15 @@ namespace cpuRE {
 
     static void run(Context& context, TriangleBuffer& triangle_buffer, Geometry& geometry) {
       VertexShader shader;
-      triangle_buffer.reserve(geometry.primitives.size());
+      auto triangles_num = PrimitiveType::primitives(geometry.indices.size());
 
-      for (auto primitive : geometry.primitives) {
-        auto p0 = shader(context, geometry.vertices[primitive.x]);
-        auto p1 = shader(context, geometry.vertices[primitive.y]);
-        auto p2 = shader(context, geometry.vertices[primitive.z]);
+      triangle_buffer.reserve(triangles_num);
+
+      for (decltype(triangles_num) i = 0; i < triangles_num; ++i) {
+        auto vi = PrimitiveType::vertices(i);
+        auto p0 = shader(context, geometry.vertices[geometry.indices[vi.x]]);
+        auto p1 = shader(context, geometry.vertices[geometry.indices[vi.y]]);
+        auto p2 = shader(context, geometry.vertices[geometry.indices[vi.z]]);
         triangle(p0, p1, p2, context, triangle_buffer);
       }
     }

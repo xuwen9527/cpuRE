@@ -8,10 +8,12 @@
 namespace cpuRE {
   struct Geometry {
     std::vector<glm::vec3> vertices;
-    std::vector<glm::ivec3> primitives;
+    std::vector<float> indices;
   };
 
   std::shared_ptr<Geometry> createTriangleGeometry();
+
+  std::shared_ptr<Geometry> createIcosahedronGeometry();
 }
 
 #endif
