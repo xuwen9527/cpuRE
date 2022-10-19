@@ -41,8 +41,6 @@ include_directories(thirdparty)
 file(GLOB_RECURSE SRCS src/*.cpp src/*.c src/*.h)
 add_executable(${PROJECT_NAME} ${SRCS})
 
-message(STATUS ${SRCS})
-
 target_link_directories(${PROJECT_NAME} PRIVATE thirdparty/lib/${architecture})
 target_link_libraries(${PROJECT_NAME} glfw3)
 

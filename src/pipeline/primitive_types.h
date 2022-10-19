@@ -9,7 +9,7 @@ namespace cpuRE {
       return indices / 3U;
     }
 
-    static constexpr glm::ivec3 vertices(unsigned int triangle) {
+    static glm::ivec3 vertices(unsigned int triangle) {
       auto v0 = 3U * triangle;
       return { v0, v0 + 1, v0 + 2 };
     }

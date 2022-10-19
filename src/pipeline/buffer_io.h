@@ -22,12 +22,12 @@ namespace cpuRE::BufferIO {
   }
 
   static void writeDepth(int x, int y, const float depth,
-                  unsigned short* depth_buffer, const int width) {
+                         unsigned short* depth_buffer, const int width) {
     *(depth_buffer + y * width + x) = static_cast<unsigned short>(depth * 65535.f);
   }
 
   static float readDepth(int x, int y,
-                  unsigned short* depth_buffer, const int width) {
+                         unsigned short* depth_buffer, const int width) {
     return *(depth_buffer + y * width + x) / 65535.f;
   }
 }

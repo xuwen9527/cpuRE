@@ -10,7 +10,7 @@ namespace cpuRE {
   template <typename VertexShader, typename FragmentShader, typename PrimitiveType>
   struct Pipeline {
     using GeometryStage = GeometryStage<VertexShader, PrimitiveType>;
-    using RasterizationStage = RasterizationStage<FragmentShader>;
+    using RasterizationStage = BinTileRasterizationStage<FragmentShader>;
 
     static void run(Context& context, Geometry& geometry) {
       TriangleBuffer triangle_buffer;

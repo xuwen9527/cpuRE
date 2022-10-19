@@ -5,6 +5,8 @@
 #include "context.h"
 #include "viewport.h"
 #include "buffer_io.h"
+#include "bin_tile_space.h"
+#include "bin_rasterizaion.h"
 
 namespace cpuRE {
   template <typename FragmentShader>
@@ -32,6 +34,25 @@ namespace cpuRE {
               }
             }
           }
+        }
+      }
+    }
+  };
+
+  template <typename FragmentShader>
+  struct BinTileRasterizationStage {
+    static void run(Context& context, TriangleBuffer& triangle_buffer) {
+      for (const auto& triangle : triangle_buffer) {
+        const auto& m      = std::get<0>(triangle);
+        const auto& bounds = std::get<2>(triangle);
+
+        auto from_bin = BinTileSpace::bin(bounds.x, bounds.y);
+        auto end_bin  = BinTileSpace::bin(bounds.z - 1, bounds.w - 1);
+        auto num_bins = BinTileSpace::numBins(from_bin, end_bin);
+
+        for (auto i = 0; i < num_bins; ++i) {
+          auto binid = BinTileSpace::binid(i, from_bin, end_bin);
+          BinRasterizaion::run(context, binid, bounds, m);
         }
       }
     }

@@ -8,6 +8,7 @@
 namespace cpuRE {
   struct Geometry {
     std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
     std::vector<float> indices;
   };
 

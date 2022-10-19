@@ -7,8 +7,14 @@ namespace cpuRE {
     geometry->vertices = {
       { -1.0f, -1.0f, 0.0f },
       {  1.0f, -1.0f, 0.0f },
-      {  0.0f,  1.0f, 0.0f }
+      {  -0.2f,  1.0f, 0.0f }
     };
+
+		geometry->normals = {
+			{ 0.0f,  0.0f, -1.0f },
+			{ 0.0f,  0.0f, -1.0f },
+			{ 0.0f,  0.0f, -1.0f }
+		};
 
     geometry->indices = {
       0, 1, 2
@@ -20,6 +26,7 @@ namespace cpuRE {
   std::shared_ptr<Geometry> createIcosahedronGeometry() {
   	const float phi = 1.6180339887498948482045868343656f;
   	const float iphi = 1.0f / phi;
+    const glm::vec2 n = glm::normalize(glm::vec2(1.0f, phi - 1.0f));
 
     std::shared_ptr<Geometry> geometry = std::make_shared<Geometry>();
     geometry->vertices = {
@@ -94,6 +101,80 @@ namespace cpuRE {
       { -iphi, -phi,   0.0f },
       { -1.0f, -1.0f,  1.0f },
       {  0.0f, -iphi,  phi  }
+    };
+
+    geometry->normals = {
+      { -n.y, 0.0f, -n.x },
+      { -n.y, 0.0f, -n.x },
+      { -n.y, 0.0f, -n.x },
+      { -n.y, 0.0f, -n.x },
+      { -n.y, 0.0f, -n.x },
+
+      {  n.y, 0.0f, -n.x },
+      {  n.y, 0.0f, -n.x },
+      {  n.y, 0.0f, -n.x },
+      {  n.y, 0.0f, -n.x },
+      {  n.y, 0.0f, -n.x },
+
+      {  n.x,  n.y, 0.0f },
+      {  n.x,  n.y, 0.0f },
+      {  n.x,  n.y, 0.0f },
+      {  n.x,  n.y, 0.0f },
+      {  n.x,  n.y, 0.0f },
+
+      { 0.0f,  n.x,  n.y },
+      { 0.0f,  n.x,  n.y },
+      { 0.0f,  n.x,  n.y },
+      { 0.0f,  n.x,  n.y },
+      { 0.0f,  n.x,  n.y },
+
+      { -n.x,  n.y, 0.0f },
+      { -n.x,  n.y, 0.0f },
+      { -n.x,  n.y, 0.0f },
+      { -n.x,  n.y, 0.0f },
+      { -n.x,  n.y, 0.0f },
+
+      { 0.0f,  n.x, -n.y },
+      { 0.0f,  n.x, -n.y },
+      { 0.0f,  n.x, -n.y },
+      { 0.0f,  n.x, -n.y },
+      { 0.0f,  n.x, -n.y },
+
+      { 0.0f, -n.x, -n.y },
+      { 0.0f, -n.x, -n.y },
+      { 0.0f, -n.x, -n.y },
+      { 0.0f, -n.x, -n.y },
+      { 0.0f, -n.x, -n.y },
+
+      {  n.x, -n.y, 0.0f },
+      {  n.x, -n.y, 0.0f },
+      {  n.x, -n.y, 0.0f },
+      {  n.x, -n.y, 0.0f },
+      {  n.x, -n.y, 0.0f },
+
+      {  n.y, 0.0f,  n.x },
+      {  n.y, 0.0f,  n.x },
+      {  n.y, 0.0f,  n.x },
+      {  n.y, 0.0f,  n.x },
+      {  n.y, 0.0f,  n.x },
+
+      { -n.y, 0.0f,  n.x },
+      { -n.y, 0.0f,  n.x },
+      { -n.y, 0.0f,  n.x },
+      { -n.y, 0.0f,  n.x },
+      { -n.y, 0.0f,  n.x },
+
+      { -n.x, -n.y, 0.0f },
+      { -n.x, -n.y, 0.0f },
+      { -n.x, -n.y, 0.0f },
+      { -n.x, -n.y, 0.0f },
+      { -n.x, -n.y, 0.0f },
+
+      { 0.0f, -n.x,  n.y },
+      { 0.0f, -n.x,  n.y },
+      { 0.0f, -n.x,  n.y },
+      { 0.0f, -n.x,  n.y },
+      { 0.0f, -n.x,  n.y }
     };
 
     geometry->indices = {
