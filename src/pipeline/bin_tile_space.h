@@ -72,19 +72,20 @@ namespace cpuRE {
 
    		int tileFromX(float x) {
         float diff = (x - start.x) * inv_tile_size.x;
-        return glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
+        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
+        return h - 1;
       }
 
-      int tileFromY(float y) {
-        float diff = (y - start.y) * inv_tile_size.y;
-        return glm::clamp(diff, 0.f, static_cast<float>(tile_num_y));
-      }
-
-      void markTileRow(int tile_row, int tile_col, int includeRight) {
+      void markTileRow(int tile_row, int tile_col) {
         constexpr uint64_t row_mask_pattern = (1U << tile_num_x) - 1;
-        uint64_t row_mask = row_mask_pattern >> (tile_col + includeRight);
+        uint64_t row_mask = row_mask_pattern >> tile_col;
         tile_mask = tile_mask ^ (row_mask << (tile_row * tile_num_x));
       }
+
+      // bool check(int tile_row, int tile_col) {
+      //   1U << tile_col;
+      //   //tile_row = ;
+      // }
     };
 
 	  static TransformedBin clipcoordsFromRaster(const glm::ivec2& bin, const glm::vec4& pixel_scale) {

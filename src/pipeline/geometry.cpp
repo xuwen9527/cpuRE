@@ -6,7 +6,7 @@ namespace cpuRE {
     std::shared_ptr<Geometry> geometry = std::make_shared<Geometry>();
     geometry->vertices = {
       { -1.0f, -1.0f, 0.0f },
-      {  1.0f, -1.0f, 0.0f },
+      {  1.0f, -0.8f, 0.0f },
       {  -0.2f,  1.0f, 0.0f }
     };
 

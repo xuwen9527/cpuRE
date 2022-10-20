@@ -44,16 +44,16 @@ namespace cpuRE {
     }
   }
 
+  void drawPixel(float x, float y, const Context& context) {
+    if (x < 1.f && x >= -1.0 && y < 1.f && y >= -1.f) {
+      auto pixel = rastercoordsFromClip(x, y, context.viewport);
+      BufferIO::writeColor(pixel.x, pixel.y, { 1.f, 1.f, 1.f, 1.f}, context.color_buffer, context.viewport.z);
+    }
+  }
+
   struct BinRasterizaion {
     static void run(const Context& context, const glm::ivec2& binid, const glm::ivec4& bounds, const glm::mat3& m) {
       // auto bin_bounds = BinTileSpace::binBounds(binid);
-
-      // glm::vec4 color(binid.x / 15.f, binid.y / 15.f, 1.f, 1.f);
-   		// for (auto y = bin_bounds.y; y < bin_bounds.w; ++y) {
-      //   for (auto x = bin_bounds.x; x < bin_bounds.z; ++x) {
-      //     BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
-      //   }
-		  // }
 
       // auto lowerX = glm::clamp(BinTileSpace::insideTileX(binid, bounds.x),     0, BinTileSpace::TileNumX);
       // auto upperX = glm::clamp(BinTileSpace::insideTileX(binid, bounds.z) + 1, 0, BinTileSpace::TileNumX);
@@ -76,28 +76,39 @@ namespace cpuRE {
 
       for (auto e = 0; e < 3; ++e) {
         auto edge = m[e];
-        float invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
-        int includeRight = edge.x < 0.f;
+        float invx = (edge.x != 0.f) ? 1.f / edge.x : -1.f / 0.000001f;
+        int unset_right = edge.x < 0.f;
+        int offset_row  = edge.y > 0.f;
 
-        for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-          auto y = bin_space.start.y + row * bin_space.tile_size.y;
+	      for (auto tile_row = 0; tile_row < BinTileSpace::TileNumY; ++tile_row) {
+          auto y = bin_space.start.y + (tile_row + offset_row) * bin_space.tile_size.y;
           auto x = (-y * edge.y - edge.z) * invx;
 
           auto tile_col = bin_space.tileFromX(x);
-          bin_space.markTileRow(row, tile_col, includeRight);
+          tile_col += unset_right || tile_col < 0;
+          bin_space.markTileRow(tile_row, tile_col);
+
+// #ifdef DRAW_BIN_TILE
+//           if (tile_col >= 0 && tile_col < BinTileSpace::TileNumX) {
+//             drawTile(bin_space.start.x + tile_col * bin_space.tile_size.x, y, context);
+//           }
+// #endif
+          drawPixel(x, y, context);
+        }
+      }
 
 #ifdef DRAW_BIN_TILE
-          if (tile_col >= 0 && tile_col < BinTileSpace::TileNumX) {
-            drawTile(bin_space.start.x + tile_col * bin_space.tile_size.x, y, context);
-          }
-#endif
-          if (binid.x == 0 && binid.y == 0) {
-            if (row == 7 && e == 2) {
-              printf("%d %d %d: %016llx\n", binid.x, binid.y, row, bin_space.tile_mask);
+        for (int row = 0; row < BinTileSpace::TileNumY; ++row) {
+          for (int col = 0; col < BinTileSpace::TileNumX; ++col) {
+            auto tilebit = (1ULL << (BinTileSpace::TileNumX - 1 - col)) << (row * BinTileSpace::TileNumX);
+            if (tilebit & bin_space.tile_mask) {
+              drawTile(bin_space.start.x + col * bin_space.tile_size.x,
+                       bin_space.start.y + row * bin_space.tile_size.y,
+                       context);
             }
           }
         }
-      }
+#endif
     }
   };
 }
