@@ -10,7 +10,7 @@
 
 namespace cpuRE {
   class Renderer {
-	public:
+  public:
     Renderer();
 
     void render();

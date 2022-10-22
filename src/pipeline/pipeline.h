@@ -12,10 +12,10 @@ namespace cpuRE {
     using GeometryStage = GeometryStage<VertexShader, PrimitiveType>;
     using RasterizationStage = BinTileRasterizationStage<FragmentShader>;
 
-    static void run(Context& context, Geometry& geometry) {
+    static void run(const Geometry& geometry, Context& context) {
       TriangleBuffer triangle_buffer;
-      GeometryStage::run(context, triangle_buffer, geometry);
-      RasterizationStage::run(context, triangle_buffer);
+      GeometryStage::run(triangle_buffer, geometry, context);
+      RasterizationStage::run(triangle_buffer, context);
     }
   };
 

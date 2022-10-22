@@ -36,7 +36,7 @@ namespace cpuRE {
     context.color_buffer = framebuffer_.colorBuffer().get();
     context.depth_buffer = framebuffer_.depthBuffer().get();
 
-    SimplePipeline::run(context, *geometry_);
+    SimplePipeline::run(*geometry_, context);
 
     framebuffer_.updateTexture();
   }

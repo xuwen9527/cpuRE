@@ -6,7 +6,7 @@ namespace {
    * Helper trackball method that projects an x,y pair onto a sphere of radius r OR
    * a hyperbolic sheet if we are away from the center of the sphere.
    */
-  double tb_project_to_sphere(double r, double x, double y) {
+  static double tb_project_to_sphere(double r, double x, double y) {
     double d, t, z;
 
     d = sqrt(x * x + y * y);
@@ -21,8 +21,8 @@ namespace {
     return z;
   }
 
-  void trackball(glm::quat &rotate, glm::vec3 &axis, float &angle, float trackballSize, float p1x,
-                 float p1y, float p2x, float p2y) {
+  static void trackball(glm::quat &rotate, glm::vec3 &axis, float &angle, float trackballSize, float p1x,
+                        float p1y, float p2x, float p2y) {
      /*
       * First, figure out z-coordinates for projection of P1 and P2 to
       * deformed sphere
@@ -43,15 +43,15 @@ namespace {
       axis = glm::cross(p2, p1);
       axis = glm::normalize(axis);
       /*
-        * Figure out how much to rotate around that axis.
-        */
+       * Figure out how much to rotate around that axis.
+       */
       glm::dvec3 e = p2 - p1;
       double d = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
       double t = d / (2.0f * trackballSize);
 
       /*
-        * Avoid problems with out-of-control values...
-        */
+       * Avoid problems with out-of-control values...
+       */
       if (t > 1.0) t = 1.0;
       if (t < -1.0) t = -1.0;
       angle = asin(t);
@@ -195,25 +195,30 @@ namespace cpuRE {
   }
 
   void Manipulator::mousePress(int x, int y) {
-    camera_->windowToProject(pressed_point_.x, pressed_point_.y, x, y);
+    last_point_ = camera_->windowToProject({ x, y });
     pressed_ = true;
   }
 
   void Manipulator::mouseRelease(int x, int y) {
+    last_point_ = camera_->windowToProject({ x, y });
     pressed_ = false;
   }
 
-  void Manipulator::mouseMove(int x, int y) {
-    if (!pressed_) {
+  void Manipulator::mouseMove(int x, int y, bool rotate) {
+    if (!camera_ || !pressed_) {
       return;
     }
 
-    glm::vec2 curr_point;
-    camera_->windowToProject(curr_point.x, curr_point.y, x, y);
+    glm::vec2 curr_point = camera_->windowToProject({ x, y });
 
-    rotateTrackball(curr_point, pressed_point_);
-
-    pressed_point_ = curr_point;
+    if (rotate) {
+      rotateTrackball(curr_point, last_point_);
+    } else {
+      glm::vec2 e = curr_point - last_point_;
+      e *= distance_ * tanf(glm::radians(camera_->fov()) / 2.f);
+      pan(e.x, e.y, 0.f);
+    }
+    last_point_ = curr_point;
   }
 
   void Manipulator::mouseScroll(bool zoomin) {

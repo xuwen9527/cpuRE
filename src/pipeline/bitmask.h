@@ -1,26 +1,23 @@
 #ifndef __BITMASK_H__
 #define __BITMASK_H__
 
-#include "bin_tile_space.h"
-
 namespace cpuRE {
+  template <unsigned int Rows, unsigned int Cols>
   struct BitMask {
-    uint64_t mask = 0;
+    static constexpr uint64_t ROW_MASK_PATTERN = (1U << Rows) - 1U;
 
-    void repeatRow(int begin, int end) {
-      unsigned int row = ((0x1U << (end - begin)) - 1) << begin;
-      mask = 0x0101010101010101ULL * row;
+    uint64_t mask = 0xFFFFFFFFFFFFFFFFULL;
+
+    void markRow(int row, int col, int revert) {
+      uint64_t row_mask = revert ? 
+                          (ROW_MASK_PATTERN >> col) :
+                          (ROW_MASK_PATTERN >> col) ^ ROW_MASK_PATTERN;
+      mask = mask & ~(row_mask << (row * Rows));
     }
 
-    void andStride(int begin, int end) {
-      mask = mask & (((0x1ULL << (end - begin)) - 1) << begin);
-    }
-
-    void xorRow(int row, int col) {
-      constexpr uint64_t line_mask_pattern = (1U << 8) - 1;
-      uint64_t line_mask = line_mask_pattern >> col;
-      line_mask = line_mask << 8;
-      mask = mask ^ line_mask;
+    bool check(int row, int col) {
+      auto bit = (1ULL << (Rows - 1 - col)) << (row * Cols);
+      return bit & mask;
     }
   };
 }

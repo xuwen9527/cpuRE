@@ -2,7 +2,7 @@
 #define __APP_H__
 
 #include <memory>
-#include "renderer.h"
+#include "display.h"
 
 struct GLFWwindow;
 
@@ -25,10 +25,7 @@ namespace cpuRE {
   private:
     GLFWwindow* window_;
 
-    Renderer renderer_;
-
-    double total_time_;
-    unsigned int frame_num_;
+    Display display_;
   };
 }
 

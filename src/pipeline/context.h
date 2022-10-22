@@ -2,7 +2,6 @@
 #define __CONTEXT_H__
 
 #include <glm/glm.hpp>
-#include "framebuffer.h"
 
 namespace cpuRE {
   struct Context {
@@ -11,6 +10,9 @@ namespace cpuRE {
     glm::vec4 pixel_scale;
     unsigned char* color_buffer;
     unsigned short* depth_buffer;
+    struct {
+      int draw_bin_rasterization = 1;
+    } debug_options;
   };
 }
 

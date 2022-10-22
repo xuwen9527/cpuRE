@@ -1,7 +1,8 @@
 {
     "files.autoSave": "afterDelay",
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
     "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
     "cmake.configureOnOpen": false,
     "cmake.configureOnEdit": false,
     "cmake.parallelJobs": 16,

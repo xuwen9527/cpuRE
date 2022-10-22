@@ -11,9 +11,9 @@
 namespace cpuRE {
   template <typename VertexShader, typename PrimitiveType>
   struct GeometryStage {
-    static void triangle(const glm::vec4& p1, const glm::vec4& p2,
-                         const glm::vec4& p3, Context& context,
-                         TriangleBuffer& triangle_buffer) {
+    static void triangle(TriangleBuffer& triangle_buffer,
+                         const glm::vec4& p1, const glm::vec4& p2,
+                         const glm::vec4& p3, Context& context) {
       glm::vec2 bounds_min, bounds_max;
       if (clipTriangle(p1, p2, p3, bounds_min, bounds_max)) {
         return;
@@ -34,13 +34,13 @@ namespace cpuRE {
       if (det <= 0.f)
         return;
 
-      auto m_inv = glm::adjugate(m) * 1.f / det;
+      auto m_inv = glm::adjugate(m) / det;
       auto uz = m_inv * glm::vec3(p1.z, p2.z, p3.z);
 
       triangle_buffer.storeTriangle(m_inv, uz, bounds);
     }
 
-    static void run(Context& context, TriangleBuffer& triangle_buffer, Geometry& geometry) {
+    static void run(TriangleBuffer& triangle_buffer, const Geometry& geometry, Context& context) {
       VertexShader shader;
       auto triangles_num = PrimitiveType::primitives(geometry.indices.size());
 
@@ -51,7 +51,7 @@ namespace cpuRE {
         auto p0 = shader(context, geometry.vertices[geometry.indices[vi.x]]);
         auto p1 = shader(context, geometry.vertices[geometry.indices[vi.y]]);
         auto p2 = shader(context, geometry.vertices[geometry.indices[vi.z]]);
-        triangle(p0, p1, p2, context, triangle_buffer);
+        triangle(triangle_buffer, p0, p1, p2, context);
       }
     }
   };

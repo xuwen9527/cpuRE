@@ -11,7 +11,7 @@
 namespace cpuRE {
   template <typename FragmentShader>
   struct RasterizationStage {
-    static void run(Context& context, TriangleBuffer& triangle_buffer) {
+    static void run(const TriangleBuffer& triangle_buffer, Context& context) {
       FragmentShader shader;
 
       for (auto x = context.viewport.x; x < context.viewport.z; ++x) {
@@ -41,7 +41,7 @@ namespace cpuRE {
 
   template <typename FragmentShader>
   struct BinTileRasterizationStage {
-    static void run(Context& context, TriangleBuffer& triangle_buffer) {
+    static void run(const TriangleBuffer& triangle_buffer, Context& context) {
       for (const auto& triangle : triangle_buffer) {
         const auto& m      = std::get<0>(triangle);
         const auto& bounds = std::get<2>(triangle);
@@ -52,7 +52,7 @@ namespace cpuRE {
 
         for (auto i = 0; i < num_bins; ++i) {
           auto binid = BinTileSpace::binid(i, from_bin, end_bin);
-          BinRasterizaion::run(context, binid, bounds, m);
+          BinRasterizaion::run(binid, m, context);
         }
       }
     }

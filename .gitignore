@@ -1,5 +1,3 @@
 build/
 lib/
 bin/
-!bin/msyh.ttc
-.git/

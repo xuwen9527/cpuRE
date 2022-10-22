@@ -43,16 +43,13 @@ namespace cpuRE {
     void mousePress(int x, int y);
     void mouseRelease(int x, int y);
 
-    void mouseMove(int x, int y);
+    void mouseMove(int x, int y, bool rotate);
 
     void mouseScroll(bool zoomin);
 
   private:
     glm::mat4 matrix();
     glm::mat4 inveseMatrix();
-
-    // bool mousePress(Event& event);
-    // bool mouseRelease(Event& event);
 
     bool rotateTrackball(const glm::vec2& p0, const glm::vec2& p1);
 
@@ -72,7 +69,7 @@ namespace cpuRE {
     bool rotate_center_;
 
     bool pressed_;
-    glm::vec2 pressed_point_;
+    glm::vec2 last_point_;
 
     std::shared_ptr<Camera> camera_;
   };

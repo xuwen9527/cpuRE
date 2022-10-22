@@ -6,7 +6,7 @@
 
 namespace cpuRE {
   template <int tile_num_x, int tile_num_y, int tile_width, int tile_height>
-  struct PatternBinTileSpace {
+  struct BinTileSpacePattern {
   protected:
     static constexpr int bin_width  = tile_num_x * tile_width;
     static constexpr int bin_height = tile_num_y * tile_height;
@@ -29,18 +29,6 @@ namespace cpuRE {
       return j * bin_height;
     }
 
-    static int right(int i) {
-      return left(i) + bin_width;
-    }
-
-    static int bottom(int j) {
-      return top(j) + bin_height;
-    }
-
-    static glm::ivec4 binBounds(const glm::ivec2& bin) {
-      return { bin.x * bin_width, bin.y * bin_height, (bin.x + 1) * bin_width, (bin.y + 1) * bin_height };
-    }
-
     static int numBins(const glm::ivec2& from, const glm::ivec2& end) {
       return (end.x - from.x + 1) * (end.y - from.y + 1);
     }
@@ -50,19 +38,10 @@ namespace cpuRE {
       return { from.x + i % width, from.y + i / width };
     }
 
-    static int insideTileX(const glm::ivec2& binid, int x) {
-      return (x - left(binid.x)) / tile_width;
-	  }
-
-    static int insideTileY(const glm::ivec2& binid, int y) {
-      return (y - top(binid.y)) / tile_height;
-    }
-
     struct TransformedBin {
       glm::vec2 start;
       glm::vec2 tile_size;
       glm::vec2 inv_tile_size;
-      uint64_t tile_mask = 0ULL;
 
       TransformedBin(int left, int top, const glm::vec4& pixel_scale) :
         start(RasterToClip::point(left, top, pixel_scale)),
@@ -72,20 +51,9 @@ namespace cpuRE {
 
    		int tileFromX(float x) {
         float diff = (x - start.x) * inv_tile_size.x;
-        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
+        int h = 1.f + glm::clamp(diff, 0.f, static_cast<float>(tile_num_x));
         return h - 1;
       }
-
-      void markTileRow(int tile_row, int tile_col) {
-        constexpr uint64_t row_mask_pattern = (1U << tile_num_x) - 1;
-        uint64_t row_mask = row_mask_pattern >> tile_col;
-        tile_mask = tile_mask ^ (row_mask << (tile_row * tile_num_x));
-      }
-
-      // bool check(int tile_row, int tile_col) {
-      //   1U << tile_col;
-      //   //tile_row = ;
-      // }
     };
 
 	  static TransformedBin clipcoordsFromRaster(const glm::ivec2& bin, const glm::vec4& pixel_scale) {
@@ -93,7 +61,7 @@ namespace cpuRE {
 	  }
   };
 
-  using BinTileSpace = PatternBinTileSpace<8, 8, 8, 8>;
+  using BinTileSpace = BinTileSpacePattern<8, 8, 8, 8>;
 }
 
 #endif
