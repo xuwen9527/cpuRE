@@ -3,7 +3,7 @@
 
 namespace cpuRE {
   std::shared_ptr<Geometry> createTriangleGeometry() {
-    std::shared_ptr<Geometry> geometry = std::make_shared<Geometry>();
+    auto geometry = std::make_shared<Geometry>();
     geometry->vertices = {
       { -1.0f, -1.0f, 0.0f },
       {  1.0f, -0.4f, 0.0f },
@@ -26,9 +26,9 @@ namespace cpuRE {
   std::shared_ptr<Geometry> createIcosahedronGeometry() {
   	const float phi = 1.6180339887498948482045868343656f;
   	const float iphi = 1.0f / phi;
-    const glm::vec2 n = glm::normalize(glm::vec2(1.0f, phi - 1.0f));
+    const auto n = glm::normalize(glm::vec2(1.0f, phi - 1.0f));
 
-    std::shared_ptr<Geometry> geometry = std::make_shared<Geometry>();
+    auto geometry = std::make_shared<Geometry>();
     geometry->vertices = {
 		  { -1.0f,  1.0f, -1.0f },
 		  { -phi,   0.0f, -iphi },

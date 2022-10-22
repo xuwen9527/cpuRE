@@ -66,7 +66,7 @@ namespace cpuRE {
     rotation_(glm::identity<glm::quat>()),
     trackballSize_(6.0f),
     rotate_speed_(15.f),
-    rotate_center_(false),
+    rotate_center_(true),
     wheelZoomFactor_(0.2f),
     minimumDistance_(0.01f),
     maximumDistance_(300.f),
@@ -139,7 +139,7 @@ namespace cpuRE {
            glm::translate(-center_);
   }
 
-  glm::mat4 Manipulator::inveseMatrix() {
+  glm::mat4 Manipulator::inverseMatrix() {
     return glm::translate(center_) *
            glm::mat4_cast(rotation_) *
            glm::translate(offset_) *

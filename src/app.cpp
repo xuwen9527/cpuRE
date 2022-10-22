@@ -16,40 +16,9 @@ namespace cpuRE {
 
   }
 
-  void App::setupFonts() {
-    // {
-    //   static std::string defaultFontPath = "msyh.ttc";
-    //   static float defaultFontSize = 20.f;
-
-    //   auto font = ImGui::GetIO().Fonts->AddFontFromFileTTF(
-    //     defaultFontPath.c_str(), defaultFontSize, nullptr, ImGui::GetIO().Fonts->GetGlyphRangesChineseFull());
-
-    //   if (font) {
-    //     ImGui::GetIO().FontDefault = font;
-    //   }
-    // }
-
-    // {
-    //   static std::string fa_solid_file_name = "../fonts/fa-solid-900.ttf";
-    //   static std::string fa_regular_file_name = "../fonts/fa-regular-400.ttf";
-    //   static float iconFontSize = 24.f;
-    //   static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-
-    //   ImFontConfig fa_solid_config;
-    //   fa_solid_config.MergeMode = true;
-    //   fa_solid_config.PixelSnapH = true;
-
-    //   ImFontConfig fa_regular_config;
-    //   fa_regular_config.MergeMode = true;
-    //   fa_regular_config.PixelSnapH = true;
-    //   ImGui::GetIO().Fonts->AddFontFromFileTTF(fa_solid_file_name.c_str(), iconFontSize, &fa_solid_config, icons_ranges);
-    //   ImGui::GetIO().Fonts->AddFontFromFileTTF(fa_regular_file_name.c_str(), iconFontSize, &fa_regular_config, icons_ranges);
-    // }
-  }
-
   void App::setup() {
     glfwSetErrorCallback([](int error, const char* description) {
-      std::cout << "Glfw Error " << error << " " << description;
+      std::cout << "glfw Error " << error << " " << description;
     });
 
     if (!glfwInit()) {
@@ -101,8 +70,6 @@ namespace cpuRE {
     // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigDockingAlwaysTabBar = true;
     io.FontAllowUserScaling = true;
-
-    setupFonts();
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init();

@@ -13,7 +13,7 @@ namespace cpuRE {
     double fps();
 
   private:
-    void mainipulate();
+    void manipulate();
 
     void frame();
 

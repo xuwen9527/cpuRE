@@ -28,18 +28,17 @@ namespace cpuRE {
     float rotateSpeed();
 
     void zoom(float scale);
-    // 绕axis旋转angle弧度, mv空间
+    // 绕axis旋转angle弧度
     void rotate(glm::vec3& axis, float angle);
-    //四元数旋转, mv空间
+    //四元数旋转
     void rotate(glm::quat& quat);
-    // x,y,z三轴平移量, mv空间
+    // x,y,z三轴平移量
     void pan(float dx, float dy, float dz);
 
     void home();
 
     void apply();
 
-    // bool handleEvent(Event& event);
     void mousePress(int x, int y);
     void mouseRelease(int x, int y);
 
@@ -49,7 +48,7 @@ namespace cpuRE {
 
   private:
     glm::mat4 matrix();
-    glm::mat4 inveseMatrix();
+    glm::mat4 inverseMatrix();
 
     bool rotateTrackball(const glm::vec2& p0, const glm::vec2& p1);
 

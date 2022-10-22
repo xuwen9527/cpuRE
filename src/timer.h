@@ -9,17 +9,13 @@ namespace cpuRE {
     using time_point = std::chrono::steady_clock::time_point;
 
     Timer() : start_time_(now()) {}
-    ~Timer() {}
-
-    Timer& operator = (Timer&&) noexcept = delete;
-    Timer& operator = (const Timer&) = delete;
-    Timer(const Timer&) = delete;
-    Timer(Timer&&) noexcept = delete;
+    ~Timer() = default;
 
     static Timer& instance() {
       static Timer timer;
       return timer;
     }
+
     static time_point now() { return std::chrono::steady_clock::now(); }
 
     void start() { start_time_ = std::chrono::steady_clock::now(); }

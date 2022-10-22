@@ -29,7 +29,7 @@ namespace cpuRE {
       | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     if (ImGui::Begin("##frame", 0, window_flags)) {
-      mainipulate();
+      manipulate();
       frame();
       drawFramebuffer();
     }
@@ -42,7 +42,7 @@ namespace cpuRE {
     return total_time_ ? frame_num_ / total_time_  : 0.0;
   }
 
-  void Display::mainipulate() {
+  void Display::manipulate() {
     //if (ImGui::BeginChild("canvas", ImVec2(0, 0), false)) {
       // if (ImGui::IsItemActive()) {
         ImGuiIO& io = ImGui::GetIO();

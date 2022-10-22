@@ -12,17 +12,13 @@ namespace cpuRE {
     App();
     ~App();
 
-    inline GLFWwindow* window() { return window_; }
-
     void run();
 
-  protected:
+  private:
     void setup();
-    void setupFonts();
 
     void render();
 
-  private:
     GLFWwindow* window_;
 
     Display display_;
