@@ -37,7 +37,6 @@ namespace cpuRE {
       auto width = end.x - from.x + 1;
       return { from.x + i % width, from.y + i / width };
     }
-
     struct TransformedBin {
       glm::vec2 start;
       glm::vec2 tile_size;
@@ -51,14 +50,14 @@ namespace cpuRE {
 
    		int tileFromX(float x) {
         float diff = (x - start.x) * inv_tile_size.x;
-        int h = 1.f + glm::clamp(diff, 0.f, static_cast<float>(tile_num_x));
+        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
         return h - 1;
       }
     };
 
-	  static TransformedBin clipcoordsFromRaster(const glm::ivec2& bin, const glm::vec4& pixel_scale) {
-		  return TransformedBin(left(bin.x), top(bin.y), pixel_scale);
-	  }
+    static TransformedBin clipcoordsFromRaster(const glm::ivec2& bin, const glm::vec4& pixel_scale) {
+      return TransformedBin(left(bin.x), top(bin.y), pixel_scale);
+    }
   };
 
   using BinTileSpace = BinTileSpacePattern<8, 8, 8, 8>;
