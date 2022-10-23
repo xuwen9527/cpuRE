@@ -42,7 +42,12 @@ namespace cpuRE {
   template <typename FragmentShader>
   struct BinTileRasterizationStage {
     static void run(const TriangleBuffer& triangle_buffer, Context& context) {
-      for (const auto& triangle : triangle_buffer) {
+      using BinTrianglePack = std::tuple<uint32_t, uint64_t>;
+
+      std::vector<BinTrianglePack> bin_tri_packs;
+
+      for (decltype(triangle_buffer.size()) i = 0; i < triangle_buffer.size(); ++i) {
+        const auto& triangle = triangle_buffer[i];
         const auto& m      = std::get<0>(triangle);
         const auto& bounds = std::get<2>(triangle);
 

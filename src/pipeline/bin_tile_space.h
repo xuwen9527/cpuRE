@@ -37,6 +37,7 @@ namespace cpuRE {
       auto width = end.x - from.x + 1;
       return { from.x + i % width, from.y + i / width };
     }
+
     struct TransformedBin {
       glm::vec2 start;
       glm::vec2 tile_size;
@@ -44,11 +45,11 @@ namespace cpuRE {
 
       TransformedBin(int left, int top, const glm::vec4& pixel_scale) :
         start(RasterToClip::point(left, top, pixel_scale)),
-			  tile_size(RasterToClip::vec(tile_width, tile_height, pixel_scale)),
-			  inv_tile_size(1.0f / tile_size.x, 1.0f / tile_size.y) {
+        tile_size(RasterToClip::vec(tile_width, tile_height, pixel_scale)),
+        inv_tile_size(1.0f / tile_size.x, 1.0f / tile_size.y) {
       }
 
-   		int tileFromX(float x) {
+      int tileFromX(float x) {
         float diff = (x - start.x) * inv_tile_size.x;
         int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
         return h - 1;

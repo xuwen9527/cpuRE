@@ -66,7 +66,7 @@ namespace cpuRE {
     rotation_(glm::identity<glm::quat>()),
     trackballSize_(6.0f),
     rotate_speed_(15.f),
-    rotate_center_(true),
+    rotate_center_(false),
     wheelZoomFactor_(0.2f),
     minimumDistance_(0.01f),
     maximumDistance_(300.f),
