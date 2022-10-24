@@ -12,9 +12,12 @@ namespace cpuRE {
   struct BinRasterizaion {
     using TileMask = BitMask<BinTileSpace::TileNumX, BinTileSpace::TileNumY>;
 
-    static uint64_t run(const glm::ivec2& binid, const glm::mat3& m, Context& context) {
+    static TileMask run(const glm::ivec2& binid, const glm::ivec4& bounds, const glm::mat3& m, Context& context) {
       TileMask tile_mask;
-      auto bin_space = BinTileSpace::clipcoordsFromRaster(binid, context.pixel_scale);
+      auto tile_bounds = BinTileSpace::tileBounds(binid, bounds);
+      tile_mask.set(tile_bounds.x, tile_bounds.y, tile_bounds.z, tile_bounds.w);
+
+      auto bin_space = BinTileSpace::transformBin(binid, context.pixel_scale);
 
       for (auto e = 0; e < 3; ++e) {
         const auto& edge = m[e];
@@ -23,8 +26,8 @@ namespace cpuRE {
         int unset_right = edge.x < 0.f;
         int offset_row  = edge.y > 0.f;
 
-	      for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-          auto y = bin_space.start.y + (row + offset_row) * bin_space.tile_size.y;
+        for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
+          auto y = bin_space.start.y + (row + offset_row) * bin_space.stamp_size.y;
           auto x = (-y * edge.y - edge.z) * invx;
 
           auto col = bin_space.tileFromX(x);
@@ -33,7 +36,7 @@ namespace cpuRE {
           tile_mask.markRow(row, col, unset_right);
 
           if (context.debug_options.draw_bin_rasterization) {
-            drawPixel(x, y, context);
+            drawPixel(x, y, { 1.f, 1.f, 1.f, 1.f }, context);
           }
         }
       }
@@ -46,15 +49,15 @@ namespace cpuRE {
         for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
           for (auto col = 0; col < BinTileSpace::TileNumX; ++col) {
             if (tile_mask.check(row, col)) {
-              auto x = bin_space.start.x + col * bin_space.tile_size.x;
-              auto y = bin_space.start.y + row * bin_space.tile_size.y;
+              auto x = bin_space.start.x + col * bin_space.stamp_size.x;
+              auto y = bin_space.start.y + row * bin_space.stamp_size.y;
               drawTile(x, y, context);
             }
           }
         }
       }
 
-      return tile_mask.mask;
+      return tile_mask;
     }
   };
 }

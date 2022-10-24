@@ -12,6 +12,7 @@ namespace cpuRE {
     unsigned short* depth_buffer;
     struct {
       int draw_bin_rasterization = 1;
+      int draw_tile_rasterization = 1;
     } debug_options;
   };
 }

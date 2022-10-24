@@ -10,33 +10,49 @@
 
 namespace cpuRE {
   struct TileRasterizaion {
-    static uint64_t run(const glm::ivec2& binid, const glm::mat3& m, Context& context) {
-      // auto bin_space = BinTileSpace::clipcoordsFromRaster(binid, context.pixel_scale);
+    using StampMask = BitMask<BinTileSpace::StampNumX, BinTileSpace::StampNumY>;
 
-      // for (auto e = 0; e < 3; ++e) {
-      //   const auto& edge = m[e];
-      //   auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
+    static StampMask run(const glm::ivec2& binid, const glm::ivec2& tileid, const glm::ivec4& bounds, const glm::mat3& m, Context& context) {
+      StampMask stamp_mask;
+      auto stamp_bounds = BinTileSpace::stampBounds(binid, tileid, bounds);
+      stamp_mask.set(stamp_bounds.x, stamp_bounds.y, stamp_bounds.z, stamp_bounds.w);
 
-      //   int unset_right = edge.x < 0.f;
-      //   int offset_row  = edge.y > 0.f;
+      auto tile_space = BinTileSpace::transformTile(binid, tileid, context.pixel_scale);
 
-	    //   for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-      //     auto y = bin_space.start.y + (row + offset_row) * bin_space.tile_size.y;
-      //     auto x = (-y * edge.y - edge.z) * invx;
+      for (auto e = 0; e < 3; ++e) {
+        const auto& edge = m[e];
+        auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
 
-      //     auto col = bin_space.tileFromX(x);
-      //     col += unset_right || (col < 0);
+        int unset_right = edge.x < 0.f;
 
-      //     tile_mask.markRow(row, col, unset_right);
+	      for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
+          auto y = tile_space.start.y + row * tile_space.fragment_size.y;
+          auto x = (-y * edge.y - edge.z) * invx;
 
-      //     if (context.debug_options.draw_bin_rasterization) {
-      //       drawPixel(x, y, context);
-      //     }
-      //   }
-      // }
+          auto col = tile_space.stampFromX(x);
+          col += unset_right || (col < 0);
 
-      // return tile_mask.mask;
-      return 0ULL;
+          stamp_mask.markRow(row, col, unset_right);
+
+          if (context.debug_options.draw_tile_rasterization) {
+            drawPixel(x, y, { 1.f, 1.f, 0.f, 1.f}, context);
+          }
+        }
+      }
+
+      if (context.debug_options.draw_tile_rasterization) {
+        for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
+          for (auto col = 0; col < BinTileSpace::StampNumX; ++col) {
+            if (stamp_mask.check(row, col)) {
+              auto x = tile_space.start.x + col * tile_space.fragment_size.x;
+              auto y = tile_space.start.y + row * tile_space.fragment_size.y;
+              drawPixel(x, y, { 0.f, 1.f, 1.f, 1.f}, context);
+            }
+          }
+        }
+      }
+
+      return stamp_mask;
     }
   };
 }

@@ -7,6 +7,7 @@
 #include "buffer_io.h"
 #include "bin_tile_space.h"
 #include "bin_rasterizaion.h"
+#include "tile_rasterizaion.h"
 
 namespace cpuRE {
   template <typename FragmentShader>
@@ -42,14 +43,10 @@ namespace cpuRE {
   template <typename FragmentShader>
   struct BinTileRasterizationStage {
     static void run(const TriangleBuffer& triangle_buffer, Context& context) {
-      using BinTrianglePack = std::tuple<uint32_t, uint64_t>;
-
-      std::vector<BinTrianglePack> bin_tri_packs;
-
-      for (decltype(triangle_buffer.size()) i = 0; i < triangle_buffer.size(); ++i) {
+      for (TriangleBuffer::size_type i = 0; i < triangle_buffer.size(); ++i) {
         const auto& triangle = triangle_buffer[i];
-        const auto& m      = std::get<0>(triangle);
         const auto& bounds = std::get<2>(triangle);
+        const auto& m      = std::get<0>(triangle);
 
         auto from_bin = BinTileSpace::bin(bounds.x, bounds.y);
         auto end_bin  = BinTileSpace::bin(bounds.z - 1, bounds.w - 1);
@@ -57,7 +54,13 @@ namespace cpuRE {
 
         for (auto i = 0; i < num_bins; ++i) {
           auto binid = BinTileSpace::binid(i, from_bin, end_bin);
-          BinRasterizaion::run(binid, m, context);
+          auto tile_mask = BinRasterizaion::run(binid, bounds, m, context);
+
+          int count = tile_mask.count();
+          for (int i = 0; i < count; ++i) {
+             auto tileid = tile_mask.bitid(i);
+             TileRasterizaion::run(binid, tileid, bounds, m, context);
+          }
         }
       }
     }
