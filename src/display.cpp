@@ -73,7 +73,7 @@ namespace cpuRE {
 
     renderer_.render();
 
-    if (frame_num_ > 10) {
+    if (frame_num_ > 30) {
       total_time_ = 0.0;
       frame_num_ = 0;
     }

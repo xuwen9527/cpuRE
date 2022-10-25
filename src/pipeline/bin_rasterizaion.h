@@ -35,9 +35,9 @@ namespace cpuRE {
 
           tile_mask.markRow(row, col, unset_right);
 
-          if (context.debug_options.draw_bin_rasterization) {
-            drawPixel(x, y, { 1.f, 1.f, 1.f, 1.f }, context);
-          }
+          // if (context.debug_options.draw_bin_rasterization) {
+          //   drawPixel(x, y, { 1.f, 1.f, 1.f, 1.f }, context);
+          // }
         }
       }
 

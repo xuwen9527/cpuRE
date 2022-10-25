@@ -25,7 +25,7 @@ namespace cpuRE {
 
         int unset_right = edge.x < 0.f;
 
-	      for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
+        for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
           auto y = tile_space.start.y + row * tile_space.fragment_size.y;
           auto x = (-y * edge.y - edge.z) * invx;
 
@@ -34,9 +34,9 @@ namespace cpuRE {
 
           stamp_mask.markRow(row, col, unset_right);
 
-          if (context.debug_options.draw_tile_rasterization) {
-            drawPixel(x, y, { 1.f, 1.f, 0.f, 1.f}, context);
-          }
+          // if (context.debug_options.draw_tile_rasterization) {
+          //   drawPixel(x, y, { 1.f, 1.f, 0.f, 1.f}, context);
+          // }
         }
       }
 

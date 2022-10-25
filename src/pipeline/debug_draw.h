@@ -5,6 +5,27 @@
 #include "viewport.h"
 
 namespace cpuRE {
+  void drawPixel(float x, float y, const glm::vec4& color, Context& context) {
+    if (x < 1.f && x >= -1.0 && y < 1.f && y >= -1.f) {
+      auto pixel = rastercoordsFromClip(x, y, context.viewport);
+      BufferIO::writeColor(pixel.x, pixel.y, color, context.color_buffer, context.viewport.z);
+    }
+  }
+
+  void drawBlendPixel(float x, float y, const glm::vec4& color, Context& context) {
+    if (x < 1.f && x >= -1.0 && y < 1.f && y >= -1.f) {
+      auto pixel = rastercoordsFromClip(x, y, context.viewport);
+      if (color.w == 1.f) {
+        BufferIO::writeColor(pixel.x, pixel.y, color, context.color_buffer, context.viewport.z);
+      } else {
+        auto c = BufferIO::readColor(pixel.x, pixel.y, context.color_buffer, context.viewport.z);
+        c = c * (1.f - color.w) + color * color.w;
+        c.w = 1.f;
+        BufferIO::writeColor(pixel.x, pixel.y, c, context.color_buffer, context.viewport.z);
+      }
+    }
+  }
+
   void drawBin(float binx, float biny, Context& context) {
     glm::vec4 color((binx + 1.f) * 0.5f, (binx + 1.f) * 0.5f, 0.f, 1.f);
     auto pixel = rastercoordsFromClip(binx, biny, context.viewport);
@@ -36,13 +57,6 @@ namespace cpuRE {
     }
     for (int i = 0; i < BinTileSpace::StampNumX; ++i) {
       BufferIO::writeColor(pixel.x + i, pixel.y + BinTileSpace::StampNumY - 1, color, context.color_buffer, context.viewport.z);
-    }
-  }
-
-  void drawPixel(float x, float y, const glm::vec4& color, Context& context) {
-    if (x < 1.f && x >= -1.0 && y < 1.f && y >= -1.f) {
-      auto pixel = rastercoordsFromClip(x, y, context.viewport);
-      BufferIO::writeColor(pixel.x, pixel.y, color, context.color_buffer, context.viewport.z);
     }
   }
 }

@@ -43,8 +43,8 @@ namespace cpuRE {
 
       return {
         glm::clamp((bounds.x - x) / stamp_num_x, 0, tile_num_x - 1),
-        glm::clamp((bounds.z - x) / stamp_num_y, 0, tile_num_y - 1),
-        glm::clamp((bounds.y - y) / stamp_num_x, 0, tile_num_x - 1),
+        glm::clamp((bounds.y - y) / stamp_num_y, 0, tile_num_y - 1),
+        glm::clamp((bounds.z - x) / stamp_num_x, 0, tile_num_x - 1),
         glm::clamp((bounds.w - y) / stamp_num_y, 0, tile_num_y - 1),
       };
     }
@@ -55,8 +55,8 @@ namespace cpuRE {
 
       return {
         glm::clamp(bounds.x - x, 0, stamp_num_x - 1),
-        glm::clamp(bounds.z - x, 0, stamp_num_y - 1),
-        glm::clamp(bounds.y - y, 0, stamp_num_x - 1),
+        glm::clamp(bounds.y - y, 0, stamp_num_y - 1),
+        glm::clamp(bounds.z - x, 0, stamp_num_x - 1),
         glm::clamp(bounds.w - y, 0, stamp_num_y - 1),
       };
     }

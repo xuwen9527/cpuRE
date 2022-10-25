@@ -5,27 +5,27 @@
 #include <glm/glm.hpp>
 
 namespace cpuRE {
-  static glm::ivec4 computeRasterBounds(const glm::vec2& bounds_min, const glm::vec2& bounds_max, const glm::vec4& viewport) {
+  static glm::ivec4 computeRasterBounds(const glm::vec2& bounds_min, const glm::vec2& bounds_max, const glm::ivec4& viewport) {
     float vp_scale_x = 0.5f * viewport.z;
     float vp_scale_y = 0.5f * viewport.w;
 
-    float x_min = std::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, viewport.x);
-    float y_min = std::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, viewport.y);
+    int x_min = (bounds_min.x + 1.0f) * vp_scale_x + viewport.x - 0.5f;
+    int y_min = (bounds_min.y + 1.0f) * vp_scale_y + viewport.y - 0.5f;
 
-    float x_max = std::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, viewport.x + viewport.z);
-    float y_max = std::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, viewport.y + viewport.w);
+    int x_max = (bounds_max.x + 1.0f) * vp_scale_x + viewport.x + 0.5f;
+    int y_max = (bounds_max.y + 1.0f) * vp_scale_y + viewport.y + 0.5f;
 
     return glm::ivec4(
-      std::ceil (x_min - 0.5f), std::ceil (y_min - 0.5f),
-      std::floor(x_max + 0.5f), std::floor(y_max + 0.5f));
+      std::max(x_min, viewport.x), std::max(y_min, viewport.y),
+      std::min(x_max, viewport.x + viewport.z - 1), std::min(y_max, viewport.y + viewport.w - 1));
   }
 
   static glm::vec4 computePixelScale(const glm::vec4& viewport) {
     return {
       2.0f / viewport.z,
       2.0f / viewport.w,
-      -1.0f - viewport.x * 2.0f / viewport.z + 1.0f / viewport.z,
-      -1.0f - viewport.y * 2.0f / viewport.w + 1.0f / viewport.w
+      -1.0f - viewport.x * 2.0f / viewport.z,
+      -1.0f - viewport.y * 2.0f / viewport.w
     };
   }
 

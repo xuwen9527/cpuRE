@@ -49,7 +49,7 @@ namespace cpuRE {
         const auto& m      = std::get<0>(triangle);
 
         auto from_bin = BinTileSpace::bin(bounds.x, bounds.y);
-        auto end_bin  = BinTileSpace::bin(bounds.z - 1, bounds.w - 1);
+        auto end_bin  = BinTileSpace::bin(bounds.z, bounds.w);
         auto num_bins = BinTileSpace::numBins(from_bin, end_bin);
 
         for (auto i = 0; i < num_bins; ++i) {

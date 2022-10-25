@@ -18,7 +18,7 @@ namespace cpuRE {
 
     uint64_t mask = 0xFFFFFFFFFFFFFFFFULL;
 
-    void set(int lowerX, int upperX, int lowerY, int upperY) {
+    void set(int lowerX, int lowerY, int upperX, int upperY) {
       upperX = Cols - 1 - upperX;
       lowerY = lowerY * Rows;
       upperY = (Rows - 1 - upperY) * Rows;
