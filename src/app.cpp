@@ -66,10 +66,11 @@ namespace cpuRE {
     style.FrameRounding = 4;
 
     ImGuiIO& io = ImGui::GetIO();
+    io.FontAllowUserScaling = true;
+    io.FontGlobalScale = 2.f;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigDockingAlwaysTabBar = true;
-    io.FontAllowUserScaling = true;
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init();

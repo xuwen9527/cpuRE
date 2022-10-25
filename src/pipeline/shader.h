@@ -15,6 +15,10 @@ namespace cpuRE {
     glm::vec4 operator() (const glm::vec3& u) {
       return glm::vec4(u, 1.f);
     }
+
+    bool discarded() {
+      return false;
+    }
   };
 }
 

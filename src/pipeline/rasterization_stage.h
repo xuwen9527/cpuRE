@@ -8,6 +8,7 @@
 #include "bin_tile_space.h"
 #include "bin_rasterizaion.h"
 #include "tile_rasterizaion.h"
+#include "stamp_shading.h"
 
 namespace cpuRE {
   template <typename FragmentShader>
@@ -43,23 +44,34 @@ namespace cpuRE {
   template <typename FragmentShader>
   struct BinTileRasterizationStage {
     static void run(const TriangleBuffer& triangle_buffer, Context& context) {
-      for (TriangleBuffer::size_type i = 0; i < triangle_buffer.size(); ++i) {
-        const auto& triangle = triangle_buffer[i];
-        const auto& bounds = std::get<2>(triangle);
+      for (TriangleBuffer::size_type triid = 0; triid < triangle_buffer.size(); ++triid) {
+        const auto& triangle = triangle_buffer[triid];
         const auto& m      = std::get<0>(triangle);
+        const auto& uz     = std::get<1>(triangle);
+        const auto& bounds = std::get<2>(triangle);
 
         auto from_bin = BinTileSpace::bin(bounds.x, bounds.y);
         auto end_bin  = BinTileSpace::bin(bounds.z, bounds.w);
         auto num_bins = BinTileSpace::numBins(from_bin, end_bin);
 
-        for (auto i = 0; i < num_bins; ++i) {
-          auto binid = BinTileSpace::binid(i, from_bin, end_bin);
-          auto tile_mask = BinRasterizaion::run(binid, bounds, m, context);
+        for (auto binid = 0; binid < num_bins; ++binid) {
+          auto bin = BinTileSpace::binFromId(binid, from_bin, end_bin);
 
-          int count = tile_mask.count();
-          for (int i = 0; i < count; ++i) {
-             auto tileid = tile_mask.bitid(i);
-             TileRasterizaion::run(binid, tileid, bounds, m, context);
+          auto tile_mask = BinRasterizaion::run(bin, bounds, m, context);
+
+          int num_tile = tile_mask.count();
+          for (int tileid = 0; tileid < num_tile; ++tileid) {
+            auto tile = tile_mask.coord(tileid);
+            auto stamp_mask = TileRasterizaion::run(bin, tile, bounds, m, context);
+
+            int num_stamp = stamp_mask.count();
+            for (int stampid = 0; stampid < num_stamp; ++stampid) {
+              auto stamp = stamp_mask.coord(stampid);
+              auto tile_xy = BinTileSpace::tile(bin, tile);
+              auto fragment = tile_xy + stamp;
+
+              StampShading<FragmentShader>::run(fragment, m, uz, context);
+            }
           }
         }
       }

@@ -14,12 +14,22 @@ namespace cpuRE {
   FrameBuffer::FrameBuffer() : size_(0, 0), color_texture_id_(0), depth_texture_id_(0) {
   }
 
+  FrameBuffer::~FrameBuffer() {
+    if (color_texture_id_) {
+      glDeleteTextures(1, &color_texture_id_);
+    }
+
+    if (depth_texture_id_) {
+      glDeleteTextures(1, &depth_texture_id_);
+    }
+  }
+
   void FrameBuffer::resize(int width, int height) {
     if (width < 2 || height < 2) {
       return;
     }
 
-    if (size_.x != width && size_.y != height) {
+    if (size_.x != width || size_.y != height) {
       size_ = { width, height };
       alloc_buffer<unsigned char>(size_, 4, color_buffer_);
       alloc_buffer<unsigned short>(size_, 1, depth_buffer_);

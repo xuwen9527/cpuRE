@@ -8,6 +8,7 @@ namespace cpuRE {
   class FrameBuffer {
 	public:
     FrameBuffer();
+    ~FrameBuffer();
 
     void resize(int width, int height);
 

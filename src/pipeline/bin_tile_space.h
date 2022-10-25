@@ -32,9 +32,13 @@ namespace cpuRE {
       return (end.x - from.x + 1) * (end.y - from.y + 1);
     }
 
-    static glm::ivec2 binid(int i, const glm::ivec2& from, const glm::ivec2& end) {
+    static glm::ivec2 tile(const glm::ivec2& bin, const glm::ivec2& tile) {
+      return { left(bin.x) + tile.x * stamp_num_x, top(bin.y) + tile.y * stamp_num_y };
+    }
+
+    static glm::ivec2 binFromId(int binid, const glm::ivec2& from, const glm::ivec2& end) {
       auto width = end.x - from.x + 1;
-      return { from.x + i % width, from.y + i / width };
+      return { from.x + binid % width, from.y + binid / width };
     }
 
     static glm::ivec4 tileBounds(const glm::ivec2& bin, const glm::ivec4& bounds) {

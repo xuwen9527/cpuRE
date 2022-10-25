@@ -46,7 +46,7 @@ namespace cpuRE {
       return __popcll(mask);
     }
 
-    glm::ivec2 bitid(int index) {
+    glm::ivec2 coord(int index) {
       // find the nth set bit
       index += 1;
       unsigned int p = 32;

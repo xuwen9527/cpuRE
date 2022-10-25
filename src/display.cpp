@@ -8,6 +8,137 @@ namespace cpuRE {
 
   }
 
+  void Display::showOptions() {
+    if (ImGui::Begin("Render Options", 0)) {
+
+      ImGui::Text("Viewport");
+      ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
+      ImGui::Separator();
+      if (ImGui::BeginTable("##viewport", 2, ImGuiTableFlags_SizingStretchProp)) {
+        static int x, y, width, height;
+        auto viewport = renderer_.camera()->viewport();
+        x = viewport.x;
+        y = viewport.y;
+        width = viewport.z;
+        height = viewport.w;
+
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("X");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::DragInt("##viewport_x", &x, 1, 0, 5000)) {
+            renderer_.camera()->viewport(x, viewport.y, viewport.z, viewport.w);
+          }
+        }
+
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("Y");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::DragInt("##viewport_y", &y, 1, 0, 5000)) {
+            renderer_.camera()->viewport(viewport.x, y, viewport.z, viewport.w);
+          }
+        }
+
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("Width");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::DragInt("##viewport_width", &width, 1, 2, 10000)) {
+            renderer_.camera()->viewport(viewport.x, viewport.y, width, viewport.w);
+          }
+        }
+
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("Height");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::DragInt("##viewport_height", &height, 1, 2, 10000)) {
+            renderer_.camera()->viewport(viewport.x, viewport.y, viewport.z, height);
+          }
+        }
+
+        ImGui::EndTable();
+      }
+      ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
+      ImGui::NewLine();
+
+      ImGui::Text("Draw Options");
+      ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
+      {
+        ImGui::Separator();
+        if (ImGui::BeginTable("##draw_options", 2, ImGuiTableFlags_SizingStretchProp)) {
+          // static bool x, y, width, height;
+
+          // ImGui::TableNextRow();
+          // {
+          //   ImGui::TableSetColumnIndex(0);
+          //   ImGui::Text("X");
+
+          //   ImGui::TableSetColumnIndex(1);
+          //   ImGui::SetNextItemWidth(-FLT_MIN);
+          //   if (ImGui::Checkbox("draw bin", &x, 1, 0, 5000)) {
+          //     renderer_.camera()->viewport(x, viewport.y, viewport.z, viewport.w);
+          //   }
+          // }
+
+          // ImGui::TableNextRow();
+          // {
+          //   ImGui::TableSetColumnIndex(0);
+          //   ImGui::Text("Y");
+
+          //   ImGui::TableSetColumnIndex(1);
+          //   ImGui::SetNextItemWidth(-FLT_MIN);
+          //   if (ImGui::DragInt("##viewport_y", &y, 1, 0, 5000)) {
+          //     renderer_.camera()->viewport(viewport.x, y, viewport.z, viewport.w);
+          //   }
+          // }
+
+          // ImGui::TableNextRow();
+          // {
+          //   ImGui::TableSetColumnIndex(0);
+          //   ImGui::Text("Width");
+
+          //   ImGui::TableSetColumnIndex(1);
+          //   ImGui::SetNextItemWidth(-FLT_MIN);
+          //   if (ImGui::DragInt("##viewport_width", &width, 1, 2, 10000)) {
+          //     renderer_.camera()->viewport(viewport.x, viewport.y, width, viewport.w);
+          //   }
+          // }
+
+          // ImGui::TableNextRow();
+          // {
+          //   ImGui::TableSetColumnIndex(0);
+          //   ImGui::Text("Height");
+
+          //   ImGui::TableSetColumnIndex(1);
+          //   ImGui::SetNextItemWidth(-FLT_MIN);
+          //   if (ImGui::DragInt("##viewport_height", &height, 1, 2, 10000)) {
+          //     renderer_.camera()->viewport(viewport.x, viewport.y, viewport.z, height);
+          //   }
+          // }
+
+          ImGui::EndTable();
+        }
+      }
+      ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
+      ImGui::NewLine();
+    }
+    ImGui::End();
+  }
+
   void Display::render() {
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(main_viewport->WorkPos);
@@ -36,6 +167,8 @@ namespace cpuRE {
     ImGui::End();
 
     ImGui::PopStyleVar(3);
+
+    showOptions();
   }
 
   double Display::fps() {
@@ -43,27 +176,24 @@ namespace cpuRE {
   }
 
   void Display::manipulate() {
-    //if (ImGui::BeginChild("canvas", ImVec2(0, 0), false)) {
-      // if (ImGui::IsItemActive()) {
-        ImGuiIO& io = ImGui::GetIO();
-        if (io.MouseWheel != 0.f) {
-          renderer_.manipulator()->mouseScroll(io.MouseWheel < 0.f);
-        } else if (ImGui::IsMouseDragging(ImGuiPopupFlags_MouseButtonLeft)) {
-          renderer_.manipulator()->mouseMove(io.MousePos.x, io.MousePos.y, true);
-        } else if (ImGui::IsMouseDragging(ImGuiPopupFlags_MouseButtonRight)) {
-          renderer_.manipulator()->mouseMove(io.MousePos.x, io.MousePos.y, false);
-        } else if (ImGui::IsMouseDown(ImGuiPopupFlags_MouseButtonLeft)) {
-          renderer_.manipulator()->mousePress(io.MousePos.x, io.MousePos.y);
-        } else if (ImGui::IsMouseDown(ImGuiPopupFlags_MouseButtonRight)) {
-          renderer_.manipulator()->mousePress(io.MousePos.x, io.MousePos.y);
-        } else if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonLeft)) {
-          renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
-        } else if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight)) {
-          renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
-        }
-      // }
-    //}
-    //ImGui::EndChild();
+    if (ImGui::IsWindowHovered()) {
+      ImGuiIO& io = ImGui::GetIO();
+      if (io.MouseWheel != 0.f) {
+        renderer_.manipulator()->mouseScroll(io.MouseWheel < 0.f);
+      } else if (ImGui::IsMouseDragging(ImGuiPopupFlags_MouseButtonLeft)) {
+        renderer_.manipulator()->mouseMove(io.MousePos.x, io.MousePos.y, true);
+      } else if (ImGui::IsMouseDragging(ImGuiPopupFlags_MouseButtonRight)) {
+        renderer_.manipulator()->mouseMove(io.MousePos.x, io.MousePos.y, false);
+      } else if (ImGui::IsMouseDown(ImGuiPopupFlags_MouseButtonLeft)) {
+        renderer_.manipulator()->mousePress(io.MousePos.x, io.MousePos.y);
+      } else if (ImGui::IsMouseDown(ImGuiPopupFlags_MouseButtonRight)) {
+        renderer_.manipulator()->mousePress(io.MousePos.x, io.MousePos.y);
+      } else if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonLeft)) {
+        renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
+      } else if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight)) {
+        renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
+      }
+    }
 
     renderer_.manipulator()->apply();
   }

@@ -19,6 +19,8 @@ namespace cpuRE {
 
     void drawFramebuffer();
 
+    void showOptions();
+
     Renderer renderer_;
 
     double total_time_;

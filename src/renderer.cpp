@@ -1,6 +1,5 @@
 #include "renderer.h"
 #include "pipeline/pipeline.h"
-#include "pipeline/context.h"
 #include "pipeline/viewport.h"
 
 namespace {

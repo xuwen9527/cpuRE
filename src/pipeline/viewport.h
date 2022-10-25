@@ -24,8 +24,8 @@ namespace cpuRE {
     return {
       2.0f / viewport.z,
       2.0f / viewport.w,
-      -1.0f - viewport.x * 2.0f / viewport.z,
-      -1.0f - viewport.y * 2.0f / viewport.w
+      -1.0f - viewport.x * 2.0f / viewport.z + 1.0f / viewport.z,
+      -1.0f - viewport.y * 2.0f / viewport.w + 1.0f / viewport.w
     };
   }
 
