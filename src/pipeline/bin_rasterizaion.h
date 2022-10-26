@@ -41,6 +41,7 @@ namespace cpuRE {
       }
 
       if (context.debug_options.draw_bin) {
+        auto bin_space = BinTileSpace::transformBin(bin, context.pixel_scale);
         drawBin(bin_space.start.x, bin_space.start.y, context);
       }
 

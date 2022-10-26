@@ -80,55 +80,35 @@ namespace cpuRE {
       {
         ImGui::Separator();
         if (ImGui::BeginTable("##draw_options", 2, ImGuiTableFlags_SizingStretchProp)) {
-          // static bool x, y, width, height;
+          auto& options = renderer_.options();
 
-          // ImGui::TableNextRow();
-          // {
-          //   ImGui::TableSetColumnIndex(0);
-          //   ImGui::Text("X");
+          ImGui::TableNextRow();
+          {
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::Checkbox("draw bin", &options.draw_bin);
+          }
 
-          //   ImGui::TableSetColumnIndex(1);
-          //   ImGui::SetNextItemWidth(-FLT_MIN);
-          //   if (ImGui::Checkbox("draw bin", &x, 1, 0, 5000)) {
-          //     renderer_.camera()->viewport(x, viewport.y, viewport.z, viewport.w);
-          //   }
-          // }
+          ImGui::TableNextRow();
+          {
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::Checkbox("draw tile", &options.draw_tile);
+          }
 
-          // ImGui::TableNextRow();
-          // {
-          //   ImGui::TableSetColumnIndex(0);
-          //   ImGui::Text("Y");
+          ImGui::TableNextRow();
+          {
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::Checkbox("draw stamp", &options.draw_stamp);
+          }
 
-          //   ImGui::TableSetColumnIndex(1);
-          //   ImGui::SetNextItemWidth(-FLT_MIN);
-          //   if (ImGui::DragInt("##viewport_y", &y, 1, 0, 5000)) {
-          //     renderer_.camera()->viewport(viewport.x, y, viewport.z, viewport.w);
-          //   }
-          // }
-
-          // ImGui::TableNextRow();
-          // {
-          //   ImGui::TableSetColumnIndex(0);
-          //   ImGui::Text("Width");
-
-          //   ImGui::TableSetColumnIndex(1);
-          //   ImGui::SetNextItemWidth(-FLT_MIN);
-          //   if (ImGui::DragInt("##viewport_width", &width, 1, 2, 10000)) {
-          //     renderer_.camera()->viewport(viewport.x, viewport.y, width, viewport.w);
-          //   }
-          // }
-
-          // ImGui::TableNextRow();
-          // {
-          //   ImGui::TableSetColumnIndex(0);
-          //   ImGui::Text("Height");
-
-          //   ImGui::TableSetColumnIndex(1);
-          //   ImGui::SetNextItemWidth(-FLT_MIN);
-          //   if (ImGui::DragInt("##viewport_height", &height, 1, 2, 10000)) {
-          //     renderer_.camera()->viewport(viewport.x, viewport.y, viewport.z, height);
-          //   }
-          // }
+          ImGui::TableNextRow();
+          {
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::Checkbox("draw edge", &options.draw_edge);
+          }
 
           ImGui::EndTable();
         }
@@ -221,7 +201,7 @@ namespace cpuRE {
 
     auto margin = ImVec2((ui_size.x - width) / 2.0f, (ui_size.y - height) / 2.0f);
     auto image_origin = ImVec2(ui_origin.x + margin.x, ui_origin.y + margin.y);
-    auto image_corner = ImVec2(image_origin.x + width, image_origin.y + height);
+    auto image_corner = ImVec2(image_origin.x + width + 1, image_origin.y + height + 1);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddImage((ImTextureID)(size_t)renderer_.framebuffer().colorTextureId(),

@@ -17,35 +17,35 @@ namespace cpuRE {
   }
 
   void drawBin(float binx, float biny, Context& context) {
-    glm::vec4 color((binx + 1.f) * 0.5f, (binx + 1.f) * 0.5f, 0.f, 1.f);
+    glm::vec4 color(1.f, 1.f, 1.f, 1.f);
     auto pixel = rastercoordsFromClip(binx, biny, context.viewport);
     for (int i = 0; i < BinTileSpace::BIN_HEIGHT; ++i) {
       auto x = pixel.x;
       auto y = pixel.y + i;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::BIN_HEIGHT; ++i) {
-      auto x = pixel.x + BinTileSpace::BIN_WIDTH - 1;
+      auto x = pixel.x + BinTileSpace::BIN_WIDTH;
       auto y = pixel.y + i;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::BIN_WIDTH; ++i) {
       auto x = pixel.x + i;
       auto y = pixel.y;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::BIN_WIDTH; ++i) {
       auto x = pixel.x + i;
-      auto y = pixel.y + BinTileSpace::BIN_HEIGHT - 1;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      auto y = pixel.y + BinTileSpace::BIN_HEIGHT;
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
   }
 
@@ -55,30 +55,30 @@ namespace cpuRE {
     for (int i = 0; i < BinTileSpace::StampNumY; ++i) {
       auto x = pixel.x;
       auto y = pixel.y + i;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::StampNumY; ++i) {
-      auto x = pixel.x + BinTileSpace::StampNumX - 1;
+      auto x = pixel.x + BinTileSpace::StampNumX;
       auto y = pixel.y + i;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::StampNumX; ++i) {
       auto x = pixel.x + i;
       auto y = pixel.y;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
     for (int i = 0; i < BinTileSpace::StampNumX; ++i) {
       auto x = pixel.x + i;
-      auto y = pixel.y + BinTileSpace::StampNumY - 1;
-      if (x >= context.viewport.z - 1) { x = context.viewport.z - 1; }
-      if (y >= context.viewport.w - 1) { y = context.viewport.w - 1; }
-      BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      auto y = pixel.y + BinTileSpace::StampNumY;
+      if (x < context.viewport.z && y < context.viewport.w) {
+        BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
+      }
     }
   }
 }

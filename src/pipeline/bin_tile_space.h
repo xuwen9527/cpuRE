@@ -94,8 +94,8 @@ namespace cpuRE {
         inv_fragment_size(1.0f / fragment_size.x, 1.0f / fragment_size.y) {
       }
 
-      int stampFromX(float x) {
-        float diff = (x - start.x) * inv_fragment_size.x;
+      int stampFromX(float x, float offset) {
+        float diff = (x - start.x) * inv_fragment_size.x + offset;
         int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(stamp_num_x));
         return h - 1;
       }

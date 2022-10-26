@@ -1,7 +1,6 @@
 #ifndef __VIEWPORT_H__
 #define __VIEWPORT_H__
 
-#include <algorithm>
 #include <glm/glm.hpp>
 
 namespace cpuRE {
@@ -18,6 +17,16 @@ namespace cpuRE {
     return glm::ivec4(
       std::max(x_min, viewport.x), std::max(y_min, viewport.y),
       std::min(x_max, viewport.x + viewport.z - 1), std::min(y_max, viewport.y + viewport.w - 1));
+
+    // float x_min = glm::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x));
+    // float y_min = glm::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y));
+
+    // float x_max = glm::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, viewport.x + viewport.z - 1.f);
+    // float y_max = glm::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, viewport.y + viewport.w - 1.f);
+
+    // return glm::ivec4(
+    //   ceil (x_min - 0.5f), ceil (y_min - 0.5f),
+    //   floor(x_max + 0.5f), floor(y_max + 0.5f));
   }
 
   static glm::vec4 computePixelScale(const glm::vec4& viewport) {

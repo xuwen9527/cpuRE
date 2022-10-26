@@ -5,10 +5,10 @@
 
 namespace cpuRE {
   struct Options {
-    int draw_bin = 1;
-    int draw_tile = 1;
-    int draw_stamp = 1;
-    int draw_edge = 0;
+    bool draw_bin   = true;
+    bool draw_tile  = true;
+    bool draw_edge  = false;
+    bool draw_stamp = false;
   };
 
   struct Context {

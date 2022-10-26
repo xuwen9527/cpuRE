@@ -26,11 +26,13 @@ namespace cpuRE {
 
         int unset_right = edge.x < 0.f;
 
+			float fillConvetion = -(0.008f - unset_right * 0.016f);
+
         for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
           auto y = tile_space.start.y + row * tile_space.fragment_size.y;
           auto x = (-y * edge.y - edge.z) * invx;
 
-          auto col = tile_space.stampFromX(x);
+          auto col = tile_space.stampFromX(x, 1.0f + fillConvetion);
           col += unset_right || (col < 0);
 
           stamp_mask.markRow(row, col, unset_right);
@@ -47,7 +49,7 @@ namespace cpuRE {
             if (stamp_mask.check(row, col)) {
               auto x = tile_space.start.x + col * tile_space.fragment_size.x;
               auto y = tile_space.start.y + row * tile_space.fragment_size.y;
-              drawPixel(x, y, { 0.f, 1.f, 1.f, 0.5f }, context);
+              drawPixel(x, y, { 0.f, 1.f, 1.f, 1.f }, context);
             }
           }
         }
