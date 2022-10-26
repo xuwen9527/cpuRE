@@ -199,14 +199,14 @@ namespace cpuRE {
     auto ui_size   = ImGui::GetContentRegionAvail();
     auto ui_corner = ImVec2(ui_origin.x + ui_size.x, ui_origin.y + ui_size.y);
 
-    auto margin = ImVec2((ui_size.x - width) / 2.0f, (ui_size.y - height) / 2.0f);
+    auto margin = ImVec2((ui_size.x - width + 1) / 2.0f, (ui_size.y - height + 1) / 2.0f);
     auto image_origin = ImVec2(ui_origin.x + margin.x, ui_origin.y + margin.y);
-    auto image_corner = ImVec2(image_origin.x + width + 1, image_origin.y + height + 1);
+    auto image_corner = ImVec2(image_origin.x + width, image_origin.y + height);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddImage((ImTextureID)(size_t)renderer_.framebuffer().colorTextureId(),
                         image_origin, image_corner, ImVec2(0.f, 1.f), ImVec2(1.f, 0.f));
 
-    draw_list->AddRect(image_origin, image_corner, ImGui::GetColorU32(ImGuiCol_Border));
+    //draw_list->AddRect(image_origin, image_corner, ImGui::GetColorU32(ImVec4(1.f, 0.f, 0.f, 1.f)));
   }
 }

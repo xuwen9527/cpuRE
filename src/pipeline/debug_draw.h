@@ -27,7 +27,7 @@ namespace cpuRE {
       }
     }
     for (int i = 0; i < BinTileSpace::BIN_HEIGHT; ++i) {
-      auto x = pixel.x + BinTileSpace::BIN_WIDTH;
+      auto x = pixel.x + BinTileSpace::BIN_WIDTH - 1;
       auto y = pixel.y + i;
       if (x < context.viewport.z && y < context.viewport.w) {
         BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
@@ -42,7 +42,7 @@ namespace cpuRE {
     }
     for (int i = 0; i < BinTileSpace::BIN_WIDTH; ++i) {
       auto x = pixel.x + i;
-      auto y = pixel.y + BinTileSpace::BIN_HEIGHT;
+      auto y = pixel.y + BinTileSpace::BIN_HEIGHT - 1;
       if (x < context.viewport.z && y < context.viewport.w) {
         BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
       }
@@ -60,7 +60,7 @@ namespace cpuRE {
       }
     }
     for (int i = 0; i < BinTileSpace::StampNumY; ++i) {
-      auto x = pixel.x + BinTileSpace::StampNumX;
+      auto x = pixel.x + BinTileSpace::StampNumX - 1;
       auto y = pixel.y + i;
       if (x < context.viewport.z && y < context.viewport.w) {
         BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
@@ -75,7 +75,7 @@ namespace cpuRE {
     }
     for (int i = 0; i < BinTileSpace::StampNumX; ++i) {
       auto x = pixel.x + i;
-      auto y = pixel.y + BinTileSpace::StampNumY;
+      auto y = pixel.y + BinTileSpace::StampNumY -1;
       if (x < context.viewport.z && y < context.viewport.w) {
         BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
       }
