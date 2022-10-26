@@ -206,7 +206,5 @@ namespace cpuRE {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddImage((ImTextureID)(size_t)renderer_.framebuffer().colorTextureId(),
                         image_origin, image_corner, ImVec2(0.f, 1.f), ImVec2(1.f, 0.f));
-
-    //draw_list->AddRect(image_origin, image_corner, ImGui::GetColorU32(ImVec4(1.f, 0.f, 0.f, 1.f)));
   }
 }
