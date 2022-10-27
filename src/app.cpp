@@ -71,7 +71,7 @@ namespace cpuRE {
     // io.ConfigDockingAlwaysTabBar = true;
 
     ImFontConfig font;
-    font.SizePixels = 15.f;
+    font.SizePixels = 30.f;
     io.Fonts->AddFontDefault(&font);
     io.FontAllowUserScaling = true;
 

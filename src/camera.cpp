@@ -5,7 +5,7 @@
 namespace cpuRE {
   Camera::Camera() : fov_(90.f), near_(0.1f), far_(1000.0f),
     mv_(glm::identity<glm::mat4>()) {
-    perspective(0, 0, 512, 512);
+    perspective(0, 0, 1024, 1024);
   }
 
   void Camera::fov(float fov) {

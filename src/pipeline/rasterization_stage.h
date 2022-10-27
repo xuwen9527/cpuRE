@@ -51,7 +51,7 @@ namespace cpuRE {
         const auto& bounds = std::get<2>(triangle);
 
         auto from_bin = BinTileSpace::bin(bounds.x, bounds.y);
-        auto end_bin  = BinTileSpace::bin(bounds.z, bounds.w);
+        auto end_bin  = BinTileSpace::bin(bounds.z - 1, bounds.w - 1);
         auto num_bins = BinTileSpace::numBins(from_bin, end_bin);
 
         for (auto binid = 0; binid < num_bins; ++binid) {

@@ -4,7 +4,7 @@
 #include "timer.h"
 
 namespace cpuRE {
-  Display::Display() : total_time_(0.0), frame_num_(0) {
+  Display::Display() : total_time_(0.0), frame_num_(0), scale_(1), buffer_index_(0) {
 
   }
 
@@ -86,32 +86,76 @@ namespace cpuRE {
           {
             ImGui::TableSetColumnIndex(0);
             ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::Checkbox("draw bin", &options.draw_bin);
+            ImGui::Checkbox("Draw Bin", &options.draw_bin);
           }
 
           ImGui::TableNextRow();
           {
             ImGui::TableSetColumnIndex(0);
             ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::Checkbox("draw tile", &options.draw_tile);
+            ImGui::Checkbox("Draw Tile", &options.draw_tile);
           }
 
           ImGui::TableNextRow();
           {
             ImGui::TableSetColumnIndex(0);
             ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::Checkbox("draw stamp", &options.draw_stamp);
+            ImGui::Checkbox("Draw Stamp", &options.draw_stamp);
           }
 
           ImGui::TableNextRow();
           {
             ImGui::TableSetColumnIndex(0);
             ImGui::SetNextItemWidth(-FLT_MIN);
-            ImGui::Checkbox("draw edge", &options.draw_edge);
+            ImGui::Checkbox("Draw Bounds", &options.draw_bounds);
+          }
+
+          ImGui::TableNextRow();
+          {
+            ImGui::TableSetColumnIndex(0);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::Checkbox("Draw Edge", &options.draw_edge);
           }
 
           ImGui::EndTable();
         }
+      }
+      ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
+      ImGui::NewLine();
+
+      ImGui::Text("Framebuffer");
+      ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
+      ImGui::Separator();
+      if (ImGui::BeginTable("##framebuffer", 2, ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::TableNextRow();
+        {
+          static const char* items[] = { "color buffer", "depth buffer" };
+
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("Buffer");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::Combo("##buffer", &buffer_index_, items, 2)) {
+          }
+        }
+
+        ImGui::TableNextRow();
+        {
+          static int current_scale = 0;
+          static const char* items[] = { "1", "2", "4", "8" };
+
+          ImGui::TableSetColumnIndex(0);
+          ImGui::Text("Scale");
+
+          ImGui::TableSetColumnIndex(1);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          if (ImGui::Combo("##scale", &current_scale, items, 4)) {
+            scale_ = pow(2, current_scale);
+          }
+        }
+
+        ImGui::EndTable();
       }
       ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
       ImGui::NewLine();
@@ -192,8 +236,8 @@ namespace cpuRE {
   }
 
   void Display::drawFramebuffer() {
-    auto width = renderer_.camera()->viewport().z;
-    auto height = renderer_.camera()->viewport().w;
+    auto width = renderer_.camera()->viewport().z * scale_;
+    auto height = renderer_.camera()->viewport().w * scale_;
 
     auto ui_origin = ImGui::GetCursorScreenPos();
     auto ui_size   = ImGui::GetContentRegionAvail();
@@ -203,8 +247,12 @@ namespace cpuRE {
     auto image_origin = ImVec2(ui_origin.x + margin.x, ui_origin.y + margin.y);
     auto image_corner = ImVec2(image_origin.x + width, image_origin.y + height);
 
+    auto buffer = (ImTextureID)(size_t)renderer_.framebuffer().colorTextureId();
+
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->AddImage((ImTextureID)(size_t)renderer_.framebuffer().colorTextureId(),
-                        image_origin, image_corner, ImVec2(0.f, 1.f), ImVec2(1.f, 0.f));
+    if (buffer_index_ == 1) {
+      buffer = (ImTextureID)(size_t)renderer_.framebuffer().depthTextureId();
+    }
+    draw_list->AddImage(buffer, image_origin, image_corner, ImVec2(0.f, 1.f), ImVec2(1.f, 0.f));
   }
 }

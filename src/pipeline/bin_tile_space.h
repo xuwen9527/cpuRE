@@ -53,18 +53,6 @@ namespace cpuRE {
       };
     }
 
-    static glm::ivec4 stampBounds(const glm::ivec2& bin, const glm::ivec2& tile, const glm::ivec4& bounds) {
-      auto x = left(bin.x) + tile.x * stamp_num_x;
-      auto y = top(bin.y)  + tile.y * stamp_num_y;
-
-      return {
-        glm::clamp(bounds.x - x, 0, stamp_num_x - 1),
-        glm::clamp(bounds.y - y, 0, stamp_num_y - 1),
-        glm::clamp(bounds.z - x, 0, stamp_num_x - 1),
-        glm::clamp(bounds.w - y, 0, stamp_num_y - 1),
-      };
-    }
-
     struct TransformedBin {
       glm::vec2 start;
       glm::vec2 stamp_size;

@@ -25,13 +25,13 @@ namespace cpuRE::BufferIO {
 
   static void writeDepth(int x, int y, const float depth,
                          unsigned short* depth_buffer, const int width) {
-    constexpr int SCALE = (1 << sizeof(unsigned short) * 8) - 1;
+    constexpr int SCALE = (1 << (sizeof(unsigned short) * 8)) - 1;
     *(depth_buffer + y * width + x) = static_cast<unsigned short>(depth * SCALE);
   }
 
   static float readDepth(int x, int y,
                          unsigned short* depth_buffer, const int width) {
-    constexpr float SCALE = 1.f / ((1 << sizeof(unsigned short) * 8) - 1);
+    constexpr float SCALE = 1.f / ((1 << (sizeof(unsigned short) * 8)) - 1);
     return *(depth_buffer + y * width + x) * SCALE;
   }
 }

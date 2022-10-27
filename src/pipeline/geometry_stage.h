@@ -31,7 +31,7 @@ namespace cpuRE {
                   p1.w, p2.w, p3.w);
 
       auto det = glm::determinant(m);
-      if (det <= 0.f)
+      if (det == 0.f)
         return;
 
       auto m_inv = glm::adjugate(m) / det;

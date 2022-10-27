@@ -4,31 +4,6 @@
 #include <glm/glm.hpp>
 
 namespace cpuRE {
-  static glm::ivec4 computeRasterBounds(const glm::vec2& bounds_min, const glm::vec2& bounds_max, const glm::ivec4& viewport) {
-    float vp_scale_x = 0.5f * viewport.z;
-    float vp_scale_y = 0.5f * viewport.w;
-
-    int x_min = (bounds_min.x + 1.0f) * vp_scale_x + viewport.x - 0.5f;
-    int y_min = (bounds_min.y + 1.0f) * vp_scale_y + viewport.y - 0.5f;
-
-    int x_max = (bounds_max.x + 1.0f) * vp_scale_x + viewport.x + 0.5f;
-    int y_max = (bounds_max.y + 1.0f) * vp_scale_y + viewport.y + 0.5f;
-
-    return glm::ivec4(
-      std::max(x_min, viewport.x), std::max(y_min, viewport.y),
-      std::min(x_max, viewport.x + viewport.z - 1), std::min(y_max, viewport.y + viewport.w - 1));
-
-    // float x_min = glm::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x));
-    // float y_min = glm::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y));
-
-    // float x_max = glm::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, viewport.x + viewport.z - 1.f);
-    // float y_max = glm::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, viewport.y + viewport.w - 1.f);
-
-    // return glm::ivec4(
-    //   ceil (x_min - 0.5f), ceil (y_min - 0.5f),
-    //   floor(x_max + 0.5f), floor(y_max + 0.5f));
-  }
-
   static glm::vec4 computePixelScale(const glm::vec4& viewport) {
     return {
       2.0f / viewport.z,
@@ -44,6 +19,31 @@ namespace cpuRE {
 
   static glm::ivec2 rastercoordsFromClip(float x, float y, const glm::vec4& viewport) {
     return { (x + 1.0f) * 0.5f * viewport.z + viewport.x, (y + 1.0f) * 0.5f * viewport.w + viewport.y };
+  }
+
+  static glm::ivec4 computeRasterBounds(const glm::vec2& bounds_min, const glm::vec2& bounds_max, const glm::ivec4& viewport) {
+    auto p0 = rastercoordsFromClip(bounds_min.x, bounds_min.y, viewport);
+    auto p1 = rastercoordsFromClip(bounds_max.x, bounds_max.y, viewport);
+
+    p0.x = glm::clamp(p0.x, viewport.x, viewport.x + viewport.z);
+    p0.y = glm::clamp(p0.y, viewport.y, viewport.y + viewport.w);
+
+    p1.x = glm::clamp(p1.x, viewport.x, viewport.x + viewport.z);
+    p1.y = glm::clamp(p1.y, viewport.y, viewport.y + viewport.w);
+
+    return { p0.x, p0.y, p1.x, p1.y };
+    // float vp_scale_x = 0.5f * viewport.z;
+    // float vp_scale_y = 0.5f * viewport.w;
+
+    // float x_min = glm::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x));
+    // float y_min = glm::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y));
+
+    // float x_max = glm::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x + viewport.z));
+    // float y_max = glm::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y + viewport.w));
+
+    // return glm::ivec4(
+    //   ceil (x_min - 0.5f), ceil (y_min - 0.5f),
+    //   floor(x_max + 0.5f), floor(y_max + 0.5f));
   }
 
   struct RasterToClip {

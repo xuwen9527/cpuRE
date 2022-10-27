@@ -57,6 +57,10 @@ namespace cpuRE {
         }
       }
 
+      if (context.debug_options.draw_bounds) {
+        drawBounds(bounds, context);
+      }
+
       return tile_mask;
     }
   };
