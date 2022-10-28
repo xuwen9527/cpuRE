@@ -20,6 +20,7 @@ namespace cpuRE {
     auto& manipulator() { return manipulator_; }
     auto& framebuffer() { return framebuffer_; }
     auto& options() { return options_; }
+    auto& geometry() { return geometry_; }
 
   private:
     std::shared_ptr<Camera> camera_;

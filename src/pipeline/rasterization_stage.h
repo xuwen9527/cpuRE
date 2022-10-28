@@ -28,7 +28,8 @@ namespace cpuRE {
               const auto& uz = std::get<1>(triangle);
               auto z = glm::dot(uz, p);
 
-              if (z >= -1.f && z <= 1.f) {
+              auto z_dest = BufferIO::readDepth(x, y, context.depth_buffer, context.viewport.z);
+              if (z >= -1.f && z <= 1.f && z < z_dest) {
                 u /= u.x + u.y + u.z;
                 auto color = shader(u);
                 BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
@@ -73,6 +74,10 @@ namespace cpuRE {
               StampShading<FragmentShader>::run(fragment, m, uz, context);
             }
           }
+        }
+
+        if (context.debug_options.draw_bounds) {
+          drawBounds(bounds, context);
         }
       }
     }

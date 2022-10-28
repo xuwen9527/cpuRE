@@ -35,30 +35,13 @@ namespace cpuRE {
           tile_mask.markRow(row, col, unset_right);
 
           if (context.debug_options.draw_edge) {
-            drawPixel(x, y, { 1.f, 1.f, 1.f, 1.f }, context);
+            drawPixel(x, y, { 1.f, 1.f, 0.f, 1.f }, context);
           }
         }
       }
 
       if (context.debug_options.draw_bin) {
-        auto bin_space = BinTileSpace::transformBin(bin, context.pixel_scale);
         drawBin(bin_space.start.x, bin_space.start.y, context);
-      }
-
-      if (context.debug_options.draw_tile) {
-        for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-          for (auto col = 0; col < BinTileSpace::TileNumX; ++col) {
-            if (tile_mask.check(row, col)) {
-              auto x = bin_space.start.x + col * bin_space.stamp_size.x;
-              auto y = bin_space.start.y + row * bin_space.stamp_size.y;
-              drawTile(x, y, context);
-            }
-          }
-        }
-      }
-
-      if (context.debug_options.draw_bounds) {
-        drawBounds(bounds, context);
       }
 
       return tile_mask;

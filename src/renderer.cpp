@@ -14,8 +14,8 @@ namespace cpuRE {
   Renderer::Renderer() : camera_(std::make_shared<Camera>()),
     manipulator_(std::make_shared<Manipulator>()) {
     manipulator_->camera(camera_);
-    // geometry_ = createTriangleGeometry();
-    geometry_ = createIcosahedronGeometry();
+    geometry_ = createTriangleGeometry();
+    // geometry_ = createIcosahedronGeometry();
   }
 
   void Renderer::render() {
@@ -25,7 +25,7 @@ namespace cpuRE {
     }
 
     framebuffer_.resize(viewport.z, viewport.w);
-    framebuffer_.clearColor(glm::vec4(0.45f, 0.55f, 0.60f, 1.0f));
+    framebuffer_.clearColor(glm::vec4(0.35f, 0.45f, 0.50f, 1.0f));
     framebuffer_.clearDepth(1.f);
 
     Context context;

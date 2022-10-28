@@ -22,7 +22,7 @@ namespace cpuRE {
         auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
 
         int unset_right = edge.x < 0.f ? 1 : 0;
-        float fill_convetion = edge.x < 0.f ? 0.f : 1.f + 0.008f;
+        float fill_convetion = edge.x < 0.f ? 0.f : 1.f ;
 
         for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
           auto y = tile_space.start.y + row * tile_space.fragment_size.y;
@@ -39,16 +39,8 @@ namespace cpuRE {
         }
       }
 
-      if (context.debug_options.draw_stamp) {
-        for (auto row = 0; row < BinTileSpace::StampNumY; ++row) {
-          for (auto col = 0; col < BinTileSpace::StampNumX; ++col) {
-            if (stamp_mask.check(row, col)) {
-              auto x = tile_space.start.x + col * tile_space.fragment_size.x;
-              auto y = tile_space.start.y + row * tile_space.fragment_size.y;
-              drawPixel(x, y, { 0.f, 1.f, 1.f, 0.5f }, context);
-            }
-          }
-        }
+      if (context.debug_options.draw_tile) {
+        drawTile(tile_space.start.x, tile_space.start.y, context);
       }
 
       return stamp_mask;

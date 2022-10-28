@@ -22,28 +22,18 @@ namespace cpuRE {
   }
 
   static glm::ivec4 computeRasterBounds(const glm::vec2& bounds_min, const glm::vec2& bounds_max, const glm::ivec4& viewport) {
-    auto p0 = rastercoordsFromClip(bounds_min.x, bounds_min.y, viewport);
-    auto p1 = rastercoordsFromClip(bounds_max.x, bounds_max.y, viewport);
+    float vp_scale_x = 0.5f * viewport.z;
+    float vp_scale_y = 0.5f * viewport.w;
 
-    p0.x = glm::clamp(p0.x, viewport.x, viewport.x + viewport.z);
-    p0.y = glm::clamp(p0.y, viewport.y, viewport.y + viewport.w);
+    float x_min = glm::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x));
+    float y_min = glm::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y));
 
-    p1.x = glm::clamp(p1.x, viewport.x, viewport.x + viewport.z);
-    p1.y = glm::clamp(p1.y, viewport.y, viewport.y + viewport.w);
+    float x_max = glm::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x + viewport.z));
+    float y_max = glm::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y + viewport.w));
 
-    return { p0.x, p0.y, p1.x, p1.y };
-    // float vp_scale_x = 0.5f * viewport.z;
-    // float vp_scale_y = 0.5f * viewport.w;
-
-    // float x_min = glm::max((bounds_min.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x));
-    // float y_min = glm::max((bounds_min.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y));
-
-    // float x_max = glm::min((bounds_max.x + 1.0f) * vp_scale_x + viewport.x, static_cast<float>(viewport.x + viewport.z));
-    // float y_max = glm::min((bounds_max.y + 1.0f) * vp_scale_y + viewport.y, static_cast<float>(viewport.y + viewport.w));
-
-    // return glm::ivec4(
-    //   ceil (x_min - 0.5f), ceil (y_min - 0.5f),
-    //   floor(x_max + 0.5f), floor(y_max + 0.5f));
+    return glm::ivec4(
+      ceil (x_min - 0.5f), ceil (y_min - 0.5f),
+      floor(x_max + 0.5f), floor(y_max + 0.5f));
   }
 
   struct RasterToClip {
