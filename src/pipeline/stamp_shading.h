@@ -18,17 +18,21 @@ namespace cpuRE {
         auto u = p * m;
         u /= u.x + u.y + u.z;
 
-        FragmentShader shader;
-        auto color = shader(u);
-        if (!shader.discarded()) {
-          BufferIO::writeColor(fragment.x, fragment.y, color, context.color_buffer, context.viewport.z);
-          BufferIO::writeDepth(fragment.x, fragment.y, z, context.depth_buffer, context.viewport.z);
-        }
-
-        if (context.debug_options.draw_stamp) {
-          if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {
-            drawPixel(p.x, p.y, { 0.f, 1.f, 1.f, 0.5f }, context);
+        if (context.debug_options.draw_fragment) {
+          FragmentShader shader;
+          auto color = shader(u);
+          if (!shader.discarded()) {
+            BufferIO::writeColor(fragment.x, fragment.y, color, context.color_buffer, context.viewport.z);
+            BufferIO::writeDepth(fragment.x, fragment.y, z,     context.depth_buffer, context.viewport.z);
           }
+        }
+      }
+
+      if (context.debug_options.draw_stamp) {
+        auto u = p * m;
+        u /= u.x + u.y + u.z;
+        if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {
+          drawPixel(p.x, p.y, { 0.f, 1.f, 1.f, 0.9f }, context);
         }
       }
     }

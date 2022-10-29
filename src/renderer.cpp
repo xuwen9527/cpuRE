@@ -24,9 +24,8 @@ namespace cpuRE {
       return;
     }
 
-    framebuffer_.resize(viewport.z, viewport.w);
-    framebuffer_.clearColor(glm::vec4(0.35f, 0.45f, 0.50f, 1.0f));
-    framebuffer_.clearDepth(1.f);
+    framebuffer_.resize({ viewport.z, viewport.w });
+    framebuffer_.apply();
 
     Context context;
     context.mvp = camera_->mvp();

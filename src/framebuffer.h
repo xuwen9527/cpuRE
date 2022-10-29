@@ -10,20 +10,19 @@ namespace cpuRE {
     FrameBuffer();
     ~FrameBuffer();
 
-    void resize(int width, int height);
+    void resize(const glm::ivec2& size);
+    const glm::ivec2& size() const { return size_; }
 
-    const auto& colorBuffer() { return color_buffer_; }
-    const auto& depthBuffer() { return depth_buffer_; }
+    const auto& colorBuffer() const { return color_buffer_; }
+    const auto& depthBuffer() const { return depth_buffer_; }
 
     auto colorTextureId() { return color_texture_id_; }
     auto depthTextureId() { return depth_texture_id_; }
 
-    const auto& clearColor() { return clear_color_; }
-    void clearColor(const glm::vec4& clear_color);
+    auto& clearColor() { return clear_color_; }
+    auto& clearDepth() { return clear_depth_; }
 
-    auto clearDepth() { return clear_depth_; }
-    void clearDepth(const float clear_depth);
-
+    void apply();
     void updateTexture();
 
   private:

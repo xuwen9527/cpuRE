@@ -48,8 +48,20 @@ namespace cpuRE {
       return {
         glm::clamp((bounds.x - x) / stamp_num_x, 0, tile_num_x - 1),
         glm::clamp((bounds.y - y) / stamp_num_y, 0, tile_num_y - 1),
-        glm::clamp((bounds.z - x) / stamp_num_x, 0, tile_num_x - 1),
-        glm::clamp((bounds.w - y) / stamp_num_y, 0, tile_num_y - 1),
+        glm::clamp((bounds.z - x - 1) / stamp_num_x, 0, tile_num_x - 1),
+        glm::clamp((bounds.w - y - 1) / stamp_num_y, 0, tile_num_y - 1),
+      };
+    }
+
+    static glm::ivec4 stampBounds(const glm::ivec2& bin, const glm::ivec2& tile, const glm::ivec4& bounds) {
+      auto x = left(bin.x) + tile.x * stamp_num_x;
+      auto y = top(bin.y)  + tile.y * stamp_num_y;
+
+      return {
+        glm::clamp(bounds.x - x, 0, stamp_num_x - 1),
+        glm::clamp(bounds.y - y, 0, stamp_num_y - 1),
+        glm::clamp(bounds.z - x - 1, 0, stamp_num_x - 1),
+        glm::clamp(bounds.w - y - 1, 0, stamp_num_y - 1),
       };
     }
 

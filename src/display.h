@@ -23,8 +23,8 @@ namespace cpuRE {
 
     Renderer renderer_;
 
-    int scale_;
-    int buffer_index_;
+    int framebuffer_scale_;
+    int framebuffer_index_;
 
     double total_time_;
     unsigned int frame_num_;

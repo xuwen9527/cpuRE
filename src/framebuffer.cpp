@@ -11,7 +11,8 @@ namespace {
 }
 
 namespace cpuRE {
-  FrameBuffer::FrameBuffer() : size_(0, 0), color_texture_id_(0), depth_texture_id_(0) {
+  FrameBuffer::FrameBuffer() : size_(0, 0), color_texture_id_(0), depth_texture_id_(0),
+   clear_color_(0.45f, 0.55f, 0.60f, 1.0f), clear_depth_(1.f) {
   }
 
   FrameBuffer::~FrameBuffer() {
@@ -24,13 +25,13 @@ namespace cpuRE {
     }
   }
 
-  void FrameBuffer::resize(int width, int height) {
-    if (width < 2 || height < 2) {
+  void FrameBuffer::resize(const glm::ivec2& size) {
+    if (size.x < 2 || size.y < 2) {
       return;
     }
 
-    if (size_.x != width || size_.y != height) {
-      size_ = { width, height };
+    if (size_ != size) {
+      size_ = size;
       alloc_buffer<unsigned char>(size_, 4, color_buffer_);
       alloc_buffer<unsigned short>(size_, 1, depth_buffer_);
     }
@@ -38,18 +39,16 @@ namespace cpuRE {
     updateTexture();
   }
 
-  void FrameBuffer::clearColor(const glm::vec4& clear_color) {
+  void FrameBuffer::apply() {
     for (auto x = 0; x < size_.x; ++x) {
       for (auto y = 0; y < size_.y; ++y) {
-        BufferIO::writeColor(x, y, clear_color, color_buffer_.get(), size_.x);
-      }
+        BufferIO::writeColor(x, y, clear_color_, color_buffer_.get(), size_.x);
     }
   }
 
-  void FrameBuffer::clearDepth(const float clear_depth) {
     for (auto x = 0; x < size_.x; ++x) {
       for (auto y = 0; y < size_.y; ++y) {
-        BufferIO::writeDepth(x, y, clear_depth, depth_buffer_.get(), size_.x);
+        BufferIO::writeDepth(x, y, clear_depth_, depth_buffer_.get(), size_.x);
       }
     }
   }

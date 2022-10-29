@@ -6,7 +6,7 @@
 
 namespace cpuRE::BufferIO {
   static void writeColor(int x, int y, const glm::vec4& color, unsigned char* color_buffer, const int width) {
-    constexpr int SCALE = (1 << sizeof(unsigned char) * 8) - 1;
+    constexpr int SCALE = (1 << (sizeof(unsigned char) * 8)) - 1;
     *(color_buffer + (y * width + x) * 4 + 0) = static_cast<unsigned char>(color.x * SCALE);
     *(color_buffer + (y * width + x) * 4 + 1) = static_cast<unsigned char>(color.y * SCALE);
     *(color_buffer + (y * width + x) * 4 + 2) = static_cast<unsigned char>(color.z * SCALE);
@@ -14,7 +14,7 @@ namespace cpuRE::BufferIO {
   }
 
   static glm::vec4 readColor(int x, int y, unsigned char* color_buffer, const int width) {
-    constexpr float SCALE = 1.f / ((1 << sizeof(unsigned char) * 8) - 1);
+    constexpr float SCALE = 1.f / ((1 << (sizeof(unsigned char) * 8)) - 1);
     return {
       *(color_buffer + (y * width + x) * 4 + 0) * SCALE,
       *(color_buffer + (y * width + x) * 4 + 1) * SCALE,

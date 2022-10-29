@@ -33,7 +33,7 @@ namespace cpuRE {
                 u /= u.x + u.y + u.z;
                 auto color = shader(u);
                 BufferIO::writeColor(x, y, color, context.color_buffer, context.viewport.z);
-                BufferIO::writeDepth(x, y, z, context.depth_buffer, context.viewport.z);
+                BufferIO::writeDepth(x, y, z,     context.depth_buffer, context.viewport.z);
               }
             }
           }
@@ -57,7 +57,6 @@ namespace cpuRE {
 
         for (auto binid = 0; binid < num_bins; ++binid) {
           auto bin = BinTileSpace::binFromId(binid, from_bin, end_bin);
-
           auto tile_mask = BinRasterizaion::run(bin, bounds, m, context);
 
           int num_tile = tile_mask.count();

@@ -17,26 +17,23 @@ namespace cpuRE {
       tile_mask.set(tile_bounds.x, tile_bounds.y, tile_bounds.z, tile_bounds.w);
 
       auto bin_space = BinTileSpace::transformBin(bin, context.pixel_scale);
+      constexpr float one_row = (BinTileSpace::StampNumY - 1.f) / BinTileSpace::StampNumY;
 
       for (auto e = 0; e < 3; ++e) {
         const auto& edge = m[e];
         auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
 
-        int unset_right = edge.x < 0.f;
-        int offset_row  = edge.y > 0.f;
+        int unset_right  = edge.x < 0.f;
+        float row_offset = edge.y > 0.f ? one_row : 0.f;
 
         for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-          auto y = bin_space.start.y + (row + offset_row) * bin_space.stamp_size.y;
+          auto y = bin_space.start.y + (row + row_offset) * bin_space.stamp_size.y;
           auto x = (-y * edge.y - edge.z) * invx;
 
           auto col = bin_space.tileFromX(x);
           col += unset_right || (col < 0);
 
           tile_mask.markRow(row, col, unset_right);
-
-          if (context.debug_options.draw_edge) {
-            drawPixel(x, y, { 1.f, 1.f, 0.f, 1.f }, context);
-          }
         }
       }
 

@@ -6,16 +6,6 @@
 #include "buffer_io.h"
 
 namespace cpuRE {
-  void drawPixel(float x, float y, const glm::vec4& color, Context& context) {
-    if (x < 1.f && x >= -1.0 && y < 1.f && y >= -1.f) {
-      auto pixel = rastercoordsFromClip(x, y, context.viewport);
-      auto c = BufferIO::readColor(pixel.x, pixel.y, context.color_buffer, context.viewport.z);
-      c = c * (1.f - color.w) + color * color.w;
-      c.w = 1.f;
-      BufferIO::writeColor(pixel.x, pixel.y, c, context.color_buffer, context.viewport.z);
-    }
-  }
-
   void drawPixel(int x, int y, const glm::vec4& color, Context& context) {
     if (x < context.viewport.z && x >= 0 && y < context.viewport.w && y >= 0) {
       auto c = BufferIO::readColor(x, y, context.color_buffer, context.viewport.z);
@@ -23,6 +13,11 @@ namespace cpuRE {
       c.w = 1.f;
       BufferIO::writeColor(x, y, c, context.color_buffer, context.viewport.z);
     }
+  }
+
+  void drawPixel(float x, float y, const glm::vec4& color, Context& context) {
+    auto pixel = rastercoordsFromClip(x, y, context.viewport);
+    drawPixel(pixel.x, pixel.y, color, context);
   }
 
   void drawBin(float binx, float biny, Context& context) {

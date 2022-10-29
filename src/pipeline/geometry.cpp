@@ -10,11 +10,11 @@ namespace cpuRE {
       {  -0.2f,  1.0f, 0.0f }
     };
 
-		geometry->normals = {
-			{ 0.0f,  0.0f, -1.0f },
-			{ 0.0f,  0.0f, -1.0f },
-			{ 0.0f,  0.0f, -1.0f }
-		};
+    geometry->normals = {
+      { 0.0f,  0.0f, -1.0f },
+      { 0.0f,  0.0f, -1.0f },
+      { 0.0f,  0.0f, -1.0f }
+    };
 
     geometry->indices = {
       0, 1, 2
@@ -30,17 +30,17 @@ namespace cpuRE {
 
     auto geometry = std::make_shared<Geometry>();
     geometry->vertices = {
-		  { -1.0f,  1.0f, -1.0f },
-		  { -phi,   0.0f, -iphi },
-		  { -1.0f, -1.0f, -1.0f },
-		  {  0.0f, -iphi, -phi  },
-		  {  0.0f,  iphi, -phi  },
+      { -1.0f,  1.0f, -1.0f },
+      { -phi,   0.0f, -iphi },
+      { -1.0f, -1.0f, -1.0f },
+      {  0.0f, -iphi, -phi  },
+      {  0.0f,  iphi, -phi  },
 
-		  {  1.0f,  1.0f, -1.0f },
-		  {  0.0f,  iphi, -phi  },
-		  {  0.0f, -iphi, -phi  },
-		  {  1.0f, -1.0f, -1.0f },
-		  {  phi,   0.0f, -iphi },
+      {  1.0f,  1.0f, -1.0f },
+      {  0.0f,  iphi, -phi  },
+      {  0.0f, -iphi, -phi  },
+      {  1.0f, -1.0f, -1.0f },
+      {  phi,   0.0f, -iphi },
 
       {  1.0f,  1.0f, -1.0f },
       {  phi,   0.0f, -iphi },

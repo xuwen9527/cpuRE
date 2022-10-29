@@ -7,9 +7,9 @@ namespace cpuRE {
   struct Options {
     bool draw_bin   = true;
     bool draw_tile  = true;
-    bool draw_stamp = false;
     bool draw_bounds= false;
-    bool draw_edge  = false;
+    bool draw_stamp = false;
+    bool draw_fragment  = false;
   };
 
   struct Context {

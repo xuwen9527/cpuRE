@@ -66,14 +66,13 @@ namespace cpuRE {
     style.FrameRounding = 4;
 
     ImGuiIO& io = ImGui::GetIO();
+    io.FontAllowUserScaling = true;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     // io.ConfigDockingAlwaysTabBar = true;
 
-    ImFontConfig font;
-    font.SizePixels = 30.f;
-    io.Fonts->AddFontDefault(&font);
-    io.FontAllowUserScaling = true;
+    ImGui::GetIO().FontDefault = io.Fonts->AddFontFromFileTTF(
+      "DroidSans.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init();
