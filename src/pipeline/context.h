@@ -9,7 +9,7 @@ namespace cpuRE {
     bool draw_tile  = true;
     bool draw_bounds= false;
     bool draw_stamp = false;
-    bool draw_fragment  = false;
+    bool draw_fragment  = true;
   };
 
   struct Context {

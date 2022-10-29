@@ -32,7 +32,7 @@ namespace cpuRE {
         auto u = p * m;
         u /= u.x + u.y + u.z;
         if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {
-          drawPixel(p.x, p.y, { 0.f, 1.f, 1.f, 0.9f }, context);
+          drawPixel(p.x, p.y, { 0.f, 1.f, 1.f, 0.5f }, context);
         }
       }
     }
