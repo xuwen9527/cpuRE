@@ -33,7 +33,8 @@ namespace cpuRE {
     context.pixel_scale = computePixelScale(context.viewport);
     context.color_buffer = framebuffer_.colorBuffer().get();
     context.depth_buffer = framebuffer_.depthBuffer().get();
-    context.debug_options = options_;
+    context.options = options_;
+    context.status = status_;
 
     SimplePipeline::run(*geometry_, context);
 

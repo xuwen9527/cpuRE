@@ -63,9 +63,11 @@ namespace cpuRE {
     unsigned int outcode_3 = computeOutcode(p3);
 
     if ((outcode_1 ^ outcode_2) == 0U && (outcode_1 ^ outcode_3) == 0U) {
-      glm::vec3 p1xyw(p1.x, p1.y, p1.w), p2xyw(p2.x, p2.y, p2.w), p3xyw(p3.x, p3.y, p3.w);
-      bounds_min = proj(hom_min(p1xyw, hom_min(p2xyw, p3xyw)));
-      bounds_max = proj(hom_max(p1xyw, hom_max(p2xyw, p3xyw)));
+      if (outcode_1 == 0U) {
+        glm::vec3 p1xyw(p1.x, p1.y, p1.w), p2xyw(p2.x, p2.y, p2.w), p3xyw(p3.x, p3.y, p3.w);
+        bounds_min = proj(hom_min(p1xyw, hom_min(p2xyw, p3xyw)));
+        bounds_max = proj(hom_max(p1xyw, hom_max(p2xyw, p3xyw)));
+      }
       return outcode_1 != 0U;
     }
 

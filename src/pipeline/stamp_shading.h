@@ -18,7 +18,7 @@ namespace cpuRE {
         auto u = p * m;
         u /= u.x + u.y + u.z;
 
-        if (context.debug_options.draw_fragment) {
+        if (context.options.draw_fragment) {
           FragmentShader shader;
           auto color = shader(u);
           if (!shader.discarded()) {
@@ -28,7 +28,7 @@ namespace cpuRE {
         }
       }
 
-      if (context.debug_options.draw_stamp) {
+      if (context.options.draw_stamp) {
         auto u = p * m;
         u /= u.x + u.y + u.z;
         if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {

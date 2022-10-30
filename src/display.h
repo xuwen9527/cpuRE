@@ -20,6 +20,7 @@ namespace cpuRE {
     void drawFramebuffer();
 
     void showOptions();
+    void showStatus();
 
     Renderer renderer_;
 

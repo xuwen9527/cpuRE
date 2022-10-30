@@ -31,8 +31,13 @@ namespace cpuRE {
                   p1.w, p2.w, p3.w);
 
       auto det = glm::determinant(m);
-      if (det == 0.f)
+      if (det == 0.f) {
         return;
+      }
+
+      if (context.status.cull_face && det < 0.f) {
+        return;
+      }
 
       auto m_inv = glm::adjugate(m) / det;
       auto uz = m_inv * glm::vec3(p1.z, p2.z, p3.z);

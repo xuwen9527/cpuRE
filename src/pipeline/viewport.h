@@ -14,7 +14,7 @@ namespace cpuRE {
   }
 
   static glm::vec3 clipcoordsFromRaster(int x, int y, const glm::vec4& pixel_scale) {
-	  return { x * pixel_scale.x + pixel_scale.z, y * pixel_scale.y + pixel_scale.w, 1.0f };
+    return { x * pixel_scale.x + pixel_scale.z, y * pixel_scale.y + pixel_scale.w, 1.0f };
   }
 
   static glm::ivec2 rastercoordsFromClip(float x, float y, const glm::vec4& viewport) {

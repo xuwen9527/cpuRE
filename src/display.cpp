@@ -10,26 +10,18 @@ namespace cpuRE {
   }
 
   void Display::render() {
-    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(main_viewport->WorkPos);
-    ImGui::SetNextWindowSize(main_viewport->WorkSize);
-
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
 
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBringToFrontOnFocus
-      | ImGuiWindowFlags_NoNavFocus
-      | ImGuiWindowFlags_NoDocking
-      | ImGuiWindowFlags_NoTitleBar
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoNavFocus
       | ImGuiWindowFlags_NoCollapse
       | ImGuiWindowFlags_NoResize
       | ImGuiWindowFlags_NoMove
-      | ImGuiWindowFlags_NoBackground
-      | ImGuiWindowFlags_NoSavedSettings
-      | ImGuiWindowFlags_NoBringToFrontOnFocus;
+      | ImGuiWindowFlags_NoSavedSettings;
 
-    if (ImGui::Begin("##frame", 0, window_flags)) {
+    ImGui::SetNextWindowDockID(ImGui::GetID("DockSpace"));
+    if (ImGui::Begin("Preview", 0, window_flags)) {
       manipulate();
       frame();
       drawFramebuffer();
@@ -39,6 +31,7 @@ namespace cpuRE {
     ImGui::PopStyleVar(3);
 
     showOptions();
+    showStatus();
   }
 
   double Display::fps() {
@@ -282,6 +275,24 @@ namespace cpuRE {
               renderer_.geometry() = createIcosahedronGeometry();
             }
           }
+          ImGui::PopID();
+        }
+
+        ImGui::EndTable();
+      }
+    }
+    ImGui::End();
+  }
+
+  void Display::showStatus() {
+    if (ImGui::Begin("OpenGL Status", 0)) {
+      if (ImGui::BeginTable("##opengl_status", 2, ImGuiTableFlags_SizingStretchProp)) {
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          ImGui::SetNextItemWidth(-FLT_MIN);
+          ImGui::PushID(&renderer_.status().cull_face);
+          ImGui::Checkbox("CULL FACE", &renderer_.status().cull_face);
           ImGui::PopID();
 
         }

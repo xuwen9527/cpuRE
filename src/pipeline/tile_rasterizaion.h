@@ -38,7 +38,7 @@ namespace cpuRE {
         }
       }
 
-      if (context.debug_options.draw_tile) {
+      if (context.options.draw_tile) {
         drawTile(tile_space.start.x, tile_space.start.y, context);
       }
 

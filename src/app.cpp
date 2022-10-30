@@ -68,14 +68,44 @@ namespace cpuRE {
     ImGuiIO& io = ImGui::GetIO();
     io.FontAllowUserScaling = true;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    // io.ConfigDockingAlwaysTabBar = true;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigDockingAlwaysTabBar = true;
 
     ImGui::GetIO().FontDefault = io.Fonts->AddFontFromFileTTF(
       "DroidSans.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init();
+  }
+
+  void App::render() {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBringToFrontOnFocus
+      | ImGuiWindowFlags_NoNavFocus
+      | ImGuiWindowFlags_NoDocking
+      | ImGuiWindowFlags_NoTitleBar
+      | ImGuiWindowFlags_NoCollapse
+      | ImGuiWindowFlags_NoResize
+      | ImGuiWindowFlags_NoMove
+      | ImGuiWindowFlags_NoBackground;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpaceWnd", 0, window_flags);
+    ImGui::PopStyleVar(3);
+
+    ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+    display_.render();
+
+    ImGui::End();
+
+    ImGui::Render();
   }
 
   void App::run() {
@@ -88,21 +118,8 @@ namespace cpuRE {
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
 
-      int width, height;
-      glfwGetFramebufferSize(window_, &width, &height);
-      glViewport(0, 0, width, height);
+      render();
 
-      glClearColor(0.f, 0.f, 0.f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-      // glEnable(GL_CULL_FACE);
-      // glEnable(GL_DEPTH_TEST);
-      // glEnable(GL_BLEND);
-      // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-      display_.render();
-
-      ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
       glfwSwapBuffers(window_);
 

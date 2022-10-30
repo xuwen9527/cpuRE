@@ -19,8 +19,9 @@ namespace cpuRE {
     auto& camera() { return camera_; }
     auto& manipulator() { return manipulator_; }
     auto& framebuffer() { return framebuffer_; }
-    auto& options() { return options_; }
     auto& geometry() { return geometry_; }
+    auto& options() { return options_; }
+    auto& status() { return status_; }
 
   private:
     std::shared_ptr<Camera> camera_;
@@ -31,6 +32,7 @@ namespace cpuRE {
     FrameBuffer framebuffer_;
 
     Options options_;
+    Status status_;
 	};
 }
 

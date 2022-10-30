@@ -37,7 +37,7 @@ namespace cpuRE {
         }
       }
 
-      if (context.debug_options.draw_bin) {
+      if (context.options.draw_bin) {
         drawBin(bin_space.start.x, bin_space.start.y, context);
       }
 
