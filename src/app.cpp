@@ -8,6 +8,20 @@
 #include "external/imgui/imgui_impl_opengl3.h"
 #include "app.h"
 
+namespace {
+  float fontSize() {
+    static float size = 0.f;
+    if (size == 0) {
+      constexpr float base_size = 8.f;
+      auto monitor = glfwGetPrimaryMonitor();
+      int x, y, width, height;
+      glfwGetMonitorWorkarea(monitor, &x, &y, &width, &height);
+      size = width < 1024 ? base_size : width / 1024.f * base_size;
+    }
+    return size;
+  }
+}
+
 namespace cpuRE {
   App::App() : window_(nullptr) {
   }
@@ -72,7 +86,7 @@ namespace cpuRE {
     io.ConfigDockingAlwaysTabBar = true;
 
     ImGui::GetIO().FontDefault = io.Fonts->AddFontFromFileTTF(
-      "DroidSans.ttf", 16.f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+      "DroidSans.ttf", fontSize(), nullptr, io.Fonts->GetGlyphRangesChineseFull());
 
     ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init();

@@ -16,12 +16,11 @@ namespace cpuRE {
     static void run(const TriangleBuffer& triangle_buffer, Context& context) {
       FragmentShader shader;
 
-      for (auto x = context.viewport.x; x < context.viewport.z; ++x) {
-        for (auto y = context.viewport.y; y < context.viewport.w; ++y) {
-          auto p = clipcoordsFromRaster(x, y, context.pixel_scale);
-
-          for (const auto& triangle : triangle_buffer) {
-            const auto& m = std::get<0>(triangle);
+      for (const auto& triangle : triangle_buffer) {
+        const auto& m = std::get<0>(triangle);
+        for (auto x = context.viewport.x; x < context.viewport.z; ++x) {
+          for (auto y = context.viewport.y; y < context.viewport.w; ++y) {
+            auto p = clipcoordsFromRaster(x, y, context.pixel_scale);
             auto u = p * m;
 
             if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {
@@ -64,19 +63,38 @@ namespace cpuRE {
             auto tile = tile_mask.coord(tileid);
             auto stamp_mask = TileRasterizaion::run(bin, tile, bounds, m, context);
 
-            int num_stamp = stamp_mask.count();
-            for (int stampid = 0; stampid < num_stamp; ++stampid) {
-              auto stamp = stamp_mask.coord(stampid);
-              auto tile_xy = BinTileSpace::tile(bin, tile);
-              auto fragment = tile_xy + stamp;
+            if (context.options.draw_stamp) {
+              int num_stamp = stamp_mask.count();
+              for (int stampid = 0; stampid < num_stamp; ++stampid) {
+                auto stamp = stamp_mask.coord(stampid);
+                auto tile_xy = BinTileSpace::tile(bin, tile);
+                auto fragment = tile_xy + stamp;
 
-              StampShading<FragmentShader>::run(fragment, m, uz, context);
+                StampShading<FragmentShader>::run(fragment, m, uz, context);
+              }
             }
           }
         }
 
         if (context.options.draw_bounds) {
           drawBounds(bounds, context);
+        }
+
+        if (context.options.draw_truth) {
+          for (auto x = context.viewport.x; x < context.viewport.z; ++x) {
+            for (auto y = context.viewport.y; y < context.viewport.w; ++y) {
+              auto p = clipcoordsFromRaster(x, y, context.pixel_scale);
+              auto u = p * m;
+
+              if (u.x >= 0.f && u.y >= 0.f && u.z >= 0.f) {
+                const auto& uz = std::get<1>(triangle);
+                auto z = glm::dot(uz, p);
+                if (z >= -1.f && z <= 1.f) {
+                  drawPixel(x, y, { 0.f, 1.f, 1.f, 0.5f }, context);
+                }
+              }
+            }
+          }
         }
       }
     }

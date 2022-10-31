@@ -27,6 +27,9 @@ namespace cpuRE {
     void rotateSpeed(float speed);
     float rotateSpeed();
 
+    void panSpeed(float speed);
+    float panSpeed();
+
     void zoom(float scale);
     // 绕axis旋转angle弧度
     void rotate(glm::vec3& axis, float angle);
@@ -59,6 +62,7 @@ namespace cpuRE {
 
     float trackballSize_;
     float rotate_speed_;
+    float pan_speed_;
 
     float wheelZoomFactor_;
     float minimumDistance_;

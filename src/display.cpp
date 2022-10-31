@@ -97,8 +97,8 @@ namespace cpuRE {
   }
 
   void Display::showOptions() {
+    ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(800, 800));
     if (ImGui::Begin("Render Options", 0)) {
-
       ImGui::Text("Viewport");
       ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
       ImGui::Separator();
@@ -189,8 +189,8 @@ namespace cpuRE {
         {
           ImGui::TableSetColumnIndex(0);
           ImGui::SetNextItemWidth(-FLT_MIN);
-          ImGui::PushID(&options.draw_fragment);
-          ImGui::Checkbox("Draw Fragment", &options.draw_fragment);
+          ImGui::PushID(&options.draw_truth);
+          ImGui::Checkbox("Draw Truth", &options.draw_truth);
           ImGui::PopID();
         }
 
@@ -244,6 +244,11 @@ namespace cpuRE {
           ImGui::PushID(&framebuffer_scale_);
           if (ImGui::Combo("##", &current_scale, items, 4)) {
             framebuffer_scale_ = pow(2, current_scale);
+            auto speed = renderer_.manipulator()->panSpeed();
+            renderer_.manipulator()->panSpeed(speed / framebuffer_scale_);
+
+            speed = renderer_.manipulator()->rotateSpeed();
+            renderer_.manipulator()->rotateSpeed(speed / framebuffer_scale_);
           }
           ImGui::PopID();
         }
@@ -285,7 +290,9 @@ namespace cpuRE {
   }
 
   void Display::showStatus() {
+    ImGui::SetNextWindowSizeConstraints(ImVec2(200, 200), ImVec2(800, 800));
     if (ImGui::Begin("OpenGL Status", 0)) {
+      ImGui::Indent(ImGui::GetTreeNodeToLabelSpacing());
       if (ImGui::BeginTable("##opengl_status", 2, ImGuiTableFlags_SizingStretchProp)) {
         ImGui::TableNextRow();
         {
@@ -294,7 +301,6 @@ namespace cpuRE {
           ImGui::PushID(&renderer_.status().cull_face);
           ImGui::Checkbox("CULL FACE", &renderer_.status().cull_face);
           ImGui::PopID();
-
         }
 
         ImGui::EndTable();

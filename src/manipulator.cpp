@@ -66,6 +66,7 @@ namespace cpuRE {
     rotation_(glm::identity<glm::quat>()),
     trackballSize_(6.0f),
     rotate_speed_(15.f),
+    pan_speed_(1.f),
     rotate_center_(false),
     wheelZoomFactor_(0.1f),
     minimumDistance_(0.01f),
@@ -110,13 +111,22 @@ namespace cpuRE {
   }
 
   void Manipulator::rotateSpeed(float speed) {
-    if (speed > 0.01f) {
+    if (speed > 0.0001f) {
       rotate_speed_ = speed;
     }
   }
 
   float Manipulator::rotateSpeed() {
     return rotate_speed_;
+  }
+
+  void Manipulator::panSpeed(float speed) {
+    if (speed > 0.0001f) {
+      pan_speed_ = speed;
+    }
+  }
+  float Manipulator::panSpeed() {
+    return pan_speed_;
   }
 
   bool Manipulator::rotateTrackball(const glm::vec2 &p0, const glm::vec2 &p1) {
@@ -216,6 +226,7 @@ namespace cpuRE {
     } else {
       glm::vec2 e = curr_point - last_point_;
       e *= distance_ * tanf(glm::radians(camera_->fov()) / 2.f);
+      e *= pan_speed_;
       pan(e.x, e.y, 0.f);
     }
     last_point_ = curr_point;

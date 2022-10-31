@@ -25,10 +25,10 @@ namespace cpuRE {
     auto width = BinTileSpace::BIN_WIDTH;
     auto height = BinTileSpace::BIN_HEIGHT;
     if ((pixel.x + width) >= context.viewport.z) {
-      width = context.viewport.z - pixel.x;
+      width = context.viewport.z - 1 - pixel.x;
     }
     if ((pixel.y + height) >= context.viewport.w) {
-      height = context.viewport.w - pixel.y;
+      height = context.viewport.w - 1 - pixel.y;
     }
 
     for (int i = 0; i < height; ++i) {
@@ -60,10 +60,10 @@ namespace cpuRE {
     auto width = BinTileSpace::StampNumX;
     auto height = BinTileSpace::StampNumY;
     if ((pixel.x + width) >= context.viewport.z) {
-      width = context.viewport.z - pixel.x;
+      width = context.viewport.z - 1 - pixel.x;
     }
     if ((pixel.y + height) >= context.viewport.w) {
-      height = context.viewport.w - pixel.y;
+      height = context.viewport.w - 1 - pixel.y;
     }
 
     for (int i = 0; i < height; ++i) {

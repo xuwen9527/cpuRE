@@ -26,8 +26,8 @@ namespace cpuRE {
         int unset_right  = edge.x < 0.f;
         float row_offset = edge.y > 0.f ? one_row : 0.f;
 
-        for (auto row = 0; row < BinTileSpace::TileNumY; ++row) {
-          auto y = bin_space.start.y + (row + row_offset) * bin_space.stamp_size.y;
+        auto y = bin_space.start.y + row_offset * bin_space.stamp_size.y;
+        for (auto row = 0; row < BinTileSpace::TileNumY; ++row, y += bin_space.stamp_size.y) {
           auto x = (-y * edge.y - edge.z) * invx;
 
           auto col = bin_space.tileFromX(x);
