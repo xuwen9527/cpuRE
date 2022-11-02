@@ -11,8 +11,8 @@ namespace cpuRE {
   struct StampShading {
     static void run(const glm::ivec2& fragment, const glm::mat3& m, const glm::vec3& uz, Context& context) {
       auto p = clipcoordsFromRaster(fragment.x, fragment.y, context.pixel_scale);
-      auto z = glm::dot(uz, p);
-      if (z >= -1.f) {
+      auto z = (glm::dot(uz, p) + 1.f) / 2.f;
+      if (z >= 0.f) {
         auto z_dest = BufferIO::readDepth(fragment.x, fragment.y, context.depth_buffer, context.viewport.z);
         if(z < z_dest) {
           auto u = p * m;
