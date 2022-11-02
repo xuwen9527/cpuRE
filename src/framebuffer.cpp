@@ -80,8 +80,10 @@ namespace cpuRE {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, size_.x, size_.y, 0,
-                   GL_LUMINANCE, GL_UNSIGNED_SHORT, depth_buffer_.get());
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_RED);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, size_.x, size_.y, 0,
+                   GL_RED, GL_UNSIGNED_SHORT, depth_buffer_.get());
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -12,7 +12,7 @@ namespace {
   float fontSize() {
     static float size = 0.f;
     if (size == 0) {
-      constexpr float base_size = 8.f;
+      constexpr float base_size = 9.f;
       auto monitor = glfwGetPrimaryMonitor();
       int x, y, width, height;
       glfwGetMonitorWorkarea(monitor, &x, &y, &width, &height);
