@@ -244,11 +244,11 @@ namespace cpuRE {
           ImGui::PushID(&framebuffer_scale_);
           if (ImGui::Combo("##", &current_scale, items, 4)) {
             framebuffer_scale_ = pow(2, current_scale);
-            auto speed = renderer_.manipulator()->panSpeed();
-            renderer_.manipulator()->panSpeed(speed / framebuffer_scale_);
+            static auto pan_speed = renderer_.manipulator()->panSpeed();
+            renderer_.manipulator()->panSpeed(pan_speed / framebuffer_scale_);
 
-            speed = renderer_.manipulator()->rotateSpeed();
-            renderer_.manipulator()->rotateSpeed(speed / framebuffer_scale_);
+            static auto rotate_speed = renderer_.manipulator()->rotateSpeed();
+            renderer_.manipulator()->rotateSpeed(rotate_speed / framebuffer_scale_);
           }
           ImGui::PopID();
         }

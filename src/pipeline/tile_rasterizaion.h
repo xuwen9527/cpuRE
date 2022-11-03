@@ -25,13 +25,13 @@ namespace cpuRE {
         auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
 
         int unset_right = edge.x < 0.f ? 1 : 0;
-        float col_offset = edge.x < 0.f ? 0.f : 1.f ;
+        float x_offset = edge.x < 0.f ? 0.f : 1.f ;
 
         auto y = tile_space.start.y;
         for (auto row = 0; row < BinTileSpace::StampNumY; ++row, y += tile_space.fragment_size.y) {
           auto x = (-y * edge.y - edge.z) * invx;
 
-          auto col = tile_space.stampFromX(x, col_offset);
+          auto col = tile_space.stampFromX(x, x_offset);
           col += unset_right || (col < 0);
 
           stamp_mask.markRow(row, col, unset_right);

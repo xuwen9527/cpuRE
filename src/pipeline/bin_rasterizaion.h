@@ -18,19 +18,21 @@ namespace cpuRE {
 
       auto bin_space = BinTileSpace::transformBin(bin, context.pixel_scale);
       constexpr float one_row = (BinTileSpace::StampNumY - 1.f) / BinTileSpace::StampNumY;
+      constexpr float one_col = 1.f / BinTileSpace::StampNumY;
 
       for (auto e = 0; e < 3; ++e) {
         const auto& edge = m[e];
         auto invx = (edge.x != 0.f) ? 1.f / edge.x : 1.f / 0.000001f;
 
         int unset_right  = edge.x < 0.f;
-        float row_offset = edge.y > 0.f ? one_row : 0.f;
+        float y_offset = edge.y > 0.f ? one_row : 0.f;
+        float x_offset   = edge.x < 0.f ? 0.f : bin_space.stamp_size.x * one_col;
 
-        auto y = bin_space.start.y + row_offset * bin_space.stamp_size.y;
+        auto y = bin_space.start.y + y_offset * bin_space.stamp_size.y;
         for (auto row = 0; row < BinTileSpace::TileNumY; ++row, y += bin_space.stamp_size.y) {
           auto x = (-y * edge.y - edge.z) * invx;
 
-          auto col = bin_space.tileFromX(x);
+          auto col = bin_space.tileFromX(x + x_offset);
           col += unset_right || (col < 0);
 
           tile_mask.markRow(row, col, unset_right);
