@@ -23,35 +23,16 @@ namespace {
 
   static void trackball(glm::quat &rotate, glm::vec3 &axis, float &angle,
     float trackballSize, float p1x, float p1y, float p2x, float p2y) {
-    /*
-     * First, figure out z-coordinates for projection of P1 and P2 to
-     * deformed sphere
-     */
-    // glm::vec3 uv(glm::vec3(0.0f, 1.0f, 0.0f) * rotate);
-    // glm::vec3 sv(glm::vec3(1.0f, 0.0f, 0.0f) * rotate);
-    // glm::vec3 lv(glm::vec3(0.0f, 0.0f, -1.0f) * rotate);
-
-    // glm::vec3 p1 = sv * p1x + uv * p1y - lv * tb_project_to_sphere(trackballSize, p1x, p1y);
-    // glm::vec3 p2 = sv * p2x + uv * p2y - lv * tb_project_to_sphere(trackballSize, p2x, p2y);
 
     glm::dvec3 p1(p1x, p1y, tb_project_to_sphere(trackballSize, p1x, p1y));
     glm::dvec3 p2(p2x, p2y, tb_project_to_sphere(trackballSize, p2x, p2y));
-
-    /*
-     * Now, we want the cross product of P1 and P2
-     */
     axis = glm::cross(p2, p1);
     axis = glm::normalize(axis);
-     /*
-     * Figure out how much to rotate around that axis.
-     */
-    glm::dvec3 e = p2 - p1;
-    double d = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
+
+    // Figure out how much to rotate around that axis.
+    double d = glm::distance(p2, p1);
     double t = d / (2.0f * trackballSize);
 
-    /*
-     * Avoid problems with out-of-control values...
-     */
     t = glm::clamp(t, -1.0, 1.0);
     angle = asin(t);
   }
