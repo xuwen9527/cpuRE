@@ -13,49 +13,47 @@ namespace {
     d = sqrt(x * x + y * y);
     /* Inside sphere */
     if (d < r * 0.70710678118654752440) {
-        z = sqrt(r * r - d * d);
-    }                            /* On hyperbola */
-    else {
-        t = r / 1.41421356237309504880;
-        z = t * t / d;
+      z = sqrt(r * r - d * d);
+    } else {/* On hyperbola */
+      t = r / 1.41421356237309504880;
+      z = t * t / d;
     }
     return z;
   }
 
-  static void trackball(glm::quat &rotate, glm::vec3 &axis, float &angle, float trackballSize, float p1x,
-                        float p1y, float p2x, float p2y) {
+  static void trackball(glm::quat &rotate, glm::vec3 &axis, float &angle,
+    float trackballSize, float p1x, float p1y, float p2x, float p2y) {
+    /*
+     * First, figure out z-coordinates for projection of P1 and P2 to
+     * deformed sphere
+     */
+    // glm::vec3 uv(glm::vec3(0.0f, 1.0f, 0.0f) * rotate);
+    // glm::vec3 sv(glm::vec3(1.0f, 0.0f, 0.0f) * rotate);
+    // glm::vec3 lv(glm::vec3(0.0f, 0.0f, -1.0f) * rotate);
+
+    // glm::vec3 p1 = sv * p1x + uv * p1y - lv * tb_project_to_sphere(trackballSize, p1x, p1y);
+    // glm::vec3 p2 = sv * p2x + uv * p2y - lv * tb_project_to_sphere(trackballSize, p2x, p2y);
+
+    glm::dvec3 p1(p1x, p1y, tb_project_to_sphere(trackballSize, p1x, p1y));
+    glm::dvec3 p2(p2x, p2y, tb_project_to_sphere(trackballSize, p2x, p2y));
+
+    /*
+     * Now, we want the cross product of P1 and P2
+     */
+    axis = glm::cross(p2, p1);
+    axis = glm::normalize(axis);
      /*
-      * First, figure out z-coordinates for projection of P1 and P2 to
-      * deformed sphere
-      */
-      // glm::vec3 uv(glm::vec3(0.0f, 1.0f, 0.0f) * rotate);
-      // glm::vec3 sv(glm::vec3(1.0f, 0.0f, 0.0f) * rotate);
-      // glm::vec3 lv(glm::vec3(0.0f, 0.0f, -1.0f) * rotate);
+     * Figure out how much to rotate around that axis.
+     */
+    glm::dvec3 e = p2 - p1;
+    double d = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
+    double t = d / (2.0f * trackballSize);
 
-      // glm::vec3 p1 = sv * p1x + uv * p1y - lv * tb_project_to_sphere(trackballSize, p1x, p1y);
-      // glm::vec3 p2 = sv * p2x + uv * p2y - lv * tb_project_to_sphere(trackballSize, p2x, p2y);
-
-      glm::dvec3 p1(p1x, p1y, tb_project_to_sphere(trackballSize, p1x, p1y));
-      glm::dvec3 p2(p2x, p2y, tb_project_to_sphere(trackballSize, p2x, p2y));
-
-      /*
-       * Now, we want the cross product of P1 and P2
-       */
-      axis = glm::cross(p2, p1);
-      axis = glm::normalize(axis);
-      /*
-       * Figure out how much to rotate around that axis.
-       */
-      glm::dvec3 e = p2 - p1;
-      double d = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
-      double t = d / (2.0f * trackballSize);
-
-      /*
-       * Avoid problems with out-of-control values...
-       */
-      if (t > 1.0) t = 1.0;
-      if (t < -1.0) t = -1.0;
-      angle = asin(t);
+    /*
+     * Avoid problems with out-of-control values...
+     */
+    t = glm::clamp(t, -1.0, 1.0);
+    angle = asin(t);
   }
 
   // a reasonable approximation of cosine interpolation
@@ -100,17 +98,17 @@ namespace cpuRE {
     return range_ > 0.f;
   }
 
-  Manipulator::Viewpoint Manipulator::Viewpoint::operator-(Manipulator::Viewpoint &other) {
+  Manipulator::Viewpoint Manipulator::Viewpoint::operator - (Manipulator::Viewpoint &other) {
     glm::vec3 focalPoint = focalPoint_ - other.focalPoint_;
-    double range = range_ - other.range_;
+    float range = range_ - other.range_;
     glm::quat quat = quat_ * glm::inverse(other.quat_);
 
     return Viewpoint(focalPoint, range, quat);
   }
 
-  Manipulator::Viewpoint Manipulator::Viewpoint::operator+(Manipulator::Viewpoint &other) {
+  Manipulator::Viewpoint Manipulator::Viewpoint::operator + (Manipulator::Viewpoint &other) {
     glm::vec3 focalPoint = focalPoint_ + other.focalPoint_;
-    double range = range_ + other.range_;
+    float range = range_ + other.range_;
     glm::quat quat = quat_ * other.quat_;
 
     return Viewpoint(focalPoint, range, quat);
@@ -168,9 +166,6 @@ namespace cpuRE {
 
   void Manipulator::distance(float distance) {
     distance_ = distance;
-
-    minimumDistance_ = distance_ * 0.05f;
-    maximumDistance_ = distance_ * 3.f;
   }
 
   float Manipulator::distance() {
@@ -275,9 +270,7 @@ namespace cpuRE {
 
   void Manipulator::apply() {
     if (valid()) {
-      if (flight_.valid()) {
-        fly(Timer::instance().time_s());
-      }
+      fly(Timer::instance().time_s());
       camera_->mv() = matrix();
     }
   }
@@ -364,25 +357,24 @@ namespace cpuRE {
       return;
     }
 
-    float t = (time_s - flight_.time_s_) / flight_.duration_s_;
+    double t = (time_s - flight_.time_s_) / flight_.duration_s_;
     float tp = t;
 
-    if (t >= 1.0) {
-      flight_.duration_s_ = 0.0;
-    } else {
-      tp = accelerationInterp(tp, 0.4);
-
-      // fade-in/out
-      tp = smoothStepInterp(tp);
-      tp = smoothStepInterp(tp);
+    if (t > 1.0f) {
+      flight_.duration_s_ = -1.f;
+      return;
     }
+
+    tp = accelerationInterp(tp, 0.4);
+    // fade-in/out
+    tp = smoothStepInterp(tp);
+    tp = smoothStepInterp(tp);
 
     Viewpoint new_vp = flight_.start_viewpoint_;
     new_vp.slerp(tp, flight_.end_viewpoint_);
 
     viewpoint(new_vp);
 
-    glm::vec3 offset = flight_.start_offset_ * (1.0f - tp);
-    offset_ = offset;
+    offset_ = flight_.start_offset_ * (1.0f - tp);
   }
 }
