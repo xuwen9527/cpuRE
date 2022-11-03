@@ -55,6 +55,14 @@ namespace cpuRE {
         renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
       } else if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight)) {
         renderer_.manipulator()->mouseRelease(io.MousePos.x, io.MousePos.y);
+      } else if (ImGui::IsKeyDown(ImGuiKey_Escape)) {
+
+      } else if (ImGui::IsKeyDown(ImGuiKey_Space)) {
+        BoundingBox box;
+        box.expandBy(renderer_.geometry()->vertices);
+        BoundingSphere sphere(box);
+        auto vp = renderer_.manipulator()->createViewpoint(sphere);
+        renderer_.manipulator()->viewpoint(vp, 2.f);
       }
     }
 
@@ -62,7 +70,7 @@ namespace cpuRE {
   }
 
   void Display::frame() {
-    Timer::instance().start();
+    Timer timer;
 
     renderer_.render();
 
@@ -70,7 +78,7 @@ namespace cpuRE {
       total_time_ = 0.0;
       frame_num_ = 0;
     }
-    total_time_ += Timer::instance().time_s();
+    total_time_ += timer.time_s();
     ++frame_num_;
   }
 

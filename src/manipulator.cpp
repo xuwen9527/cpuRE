@@ -1,5 +1,6 @@
 #include <glm/gtx/transform.hpp>
 #include "manipulator.h"
+#include "timer.h"
 
 namespace {
   /**
@@ -56,9 +57,87 @@ namespace {
       if (t < -1.0) t = -1.0;
       angle = asin(t);
   }
+
+  // a reasonable approximation of cosine interpolation
+  double smoothStepInterp(double t) {
+    return (t * t) * (3.0 - 2.0 * t);
+  }
+
+  // rough approximation of pow(x,y)
+  double powFast(double x, double y) {
+    return x / (x + y - y * x);
+  }
+
+  // accel/decel curve (a < 0 => decel)
+  double accelerationInterp(double t, double a) {
+    return a == 0.0 ? t : a > 0.0 ? powFast(t, a) : 1.0 - powFast(1.0 - t, -a);
+  }
 }
 
 namespace cpuRE {
+  Manipulator::Viewpoint::Viewpoint() : range_(-1.0f),
+    focalPoint_(0.f, 0.f, 0.f),
+    quat_(glm::identity<glm::quat>()) {
+  }
+
+  Manipulator::Viewpoint::Viewpoint(const Manipulator::Viewpoint &viewpoint) {
+    name_ = viewpoint.name_;
+    quat_ = viewpoint.quat_;
+    range_ = viewpoint.range_;
+    focalPoint_ = viewpoint.focalPoint_;
+  }
+
+  Manipulator::Viewpoint::Viewpoint(glm::vec3 &focal, float range, glm::vec3 &angle)
+    : focalPoint_(focal), range_(range) {
+    eulerAngle(angle);
+  }
+
+  Manipulator::Viewpoint::Viewpoint(glm::vec3 &focal, float range, glm::quat &quat)
+    : focalPoint_(focal), quat_(quat), range_(range) {
+  }
+
+  bool Manipulator::Viewpoint::valid() {
+    return range_ > 0.f;
+  }
+
+  Manipulator::Viewpoint Manipulator::Viewpoint::operator-(Manipulator::Viewpoint &other) {
+    glm::vec3 focalPoint = focalPoint_ - other.focalPoint_;
+    double range = range_ - other.range_;
+    glm::quat quat = quat_ * glm::inverse(other.quat_);
+
+    return Viewpoint(focalPoint, range, quat);
+  }
+
+  Manipulator::Viewpoint Manipulator::Viewpoint::operator+(Manipulator::Viewpoint &other) {
+    glm::vec3 focalPoint = focalPoint_ + other.focalPoint_;
+    double range = range_ + other.range_;
+    glm::quat quat = quat_ * other.quat_;
+
+    return Viewpoint(focalPoint, range, quat);
+  }
+
+  void Manipulator::Viewpoint::slerp(float t, Viewpoint &to) {
+    focalPoint_ = focalPoint_ + (to.focalPoint() - focalPoint_) * t;
+    range_ = range_ + (to.range() - range_) * t;
+    quat_ = glm::slerp(quat_, to.quat(), t);
+  }
+
+  void Manipulator::Viewpoint::eulerAngle(glm::vec3 &eulerAngle) {
+    quat_ = glm::quat(eulerAngle);
+  }
+
+  glm::vec3 Manipulator::Viewpoint::eulerAngle() const {
+    return glm::eulerAngles(quat_);
+  }
+
+  bool Manipulator::Flight::valid() {
+    return duration_s_ > 0.000001f;
+  }
+
+  void Manipulator::Flight::reset() {
+    duration_s_ = 0.0f;
+  }
+
   Manipulator::Manipulator() :
     distance_(1.0f),
     center_(0.f, 0.f, 0.f),
@@ -69,13 +148,10 @@ namespace cpuRE {
     pan_speed_(1.f),
     rotate_center_(false),
     wheelZoomFactor_(0.1f),
-    minimumDistance_(0.01f),
+    minimumDistance_(0.05f),
     maximumDistance_(300.f),
     pressed_(false) {
-  }
-
-  Manipulator::~Manipulator() {
-
+    flight_.reset();
   }
 
   void Manipulator::camera(const std::shared_ptr<Camera> &camera) {
@@ -93,8 +169,7 @@ namespace cpuRE {
   void Manipulator::distance(float distance) {
     distance_ = distance;
 
-    wheelZoomFactor_ = distance_ * 0.0001f;
-    minimumDistance_ = distance_ * 0.01f;
+    minimumDistance_ = distance_ * 0.05f;
     maximumDistance_ = distance_ * 3.f;
   }
 
@@ -200,6 +275,9 @@ namespace cpuRE {
 
   void Manipulator::apply() {
     if (valid()) {
+      if (flight_.valid()) {
+        fly(Timer::instance().time_s());
+      }
       camera_->mv() = matrix();
     }
   }
@@ -219,6 +297,7 @@ namespace cpuRE {
       return;
     }
 
+    flight_.reset();
     glm::vec2 curr_point = camera_->windowToProject({ x, y });
 
     if (rotate) {
@@ -234,5 +313,76 @@ namespace cpuRE {
 
   void Manipulator::mouseScroll(bool zoomin) {
     zoom(zoomin ? wheelZoomFactor_ : -wheelZoomFactor_);
+  }
+
+  Manipulator::Viewpoint Manipulator::createViewpoint(BoundingSphere &sphere) {
+    if (sphere.valid()) {
+      if (camera_) {
+        float dist = sphere.radius();
+        float angle = glm::radians(camera_->fov() / 2.f);
+        if (fabs(angle) > 0.00000001f) {
+          dist /= tanf(angle);
+        }
+
+        glm::quat quat(glm::identity<glm::quat>());
+        return Viewpoint(sphere.center(), dist, quat);
+      }
+    }
+
+    return Viewpoint();
+  }
+
+  Manipulator::Viewpoint Manipulator::viewpoint() {
+    glm::quat rot = glm::inverse(rotation_);
+    return Viewpoint(center_, distance_, rot);
+  }
+
+  void Manipulator::viewpoint(Viewpoint &vp, float duration_s) {
+    if (!vp.valid()) {
+      return;
+    }
+
+    if (duration_s > 0.000001f) {
+      flight_.start_viewpoint_ = viewpoint();
+      flight_.end_viewpoint_ = vp;
+      flight_.start_offset_ = offset_;
+      flight_.duration_s_ = duration_s;
+      flight_.time_s_ = Timer::instance().time_s();
+    } else {
+      center(vp.focalPoint());
+      distance(vp.range());
+
+      offset_ = { 0.f, 0.f, 0.f };
+
+      glm::quat quat(glm::inverse(vp.quat()));
+      rotation(quat);
+    }
+  }
+
+  void Manipulator::fly(float time_s) {
+    if (!flight_.valid()) {
+      return;
+    }
+
+    float t = (time_s - flight_.time_s_) / flight_.duration_s_;
+    float tp = t;
+
+    if (t >= 1.0) {
+      flight_.duration_s_ = 0.0;
+    } else {
+      tp = accelerationInterp(tp, 0.4);
+
+      // fade-in/out
+      tp = smoothStepInterp(tp);
+      tp = smoothStepInterp(tp);
+    }
+
+    Viewpoint new_vp = flight_.start_viewpoint_;
+    new_vp.slerp(tp, flight_.end_viewpoint_);
+
+    viewpoint(new_vp);
+
+    glm::vec3 offset = flight_.start_offset_ * (1.0f - tp);
+    offset_ = offset;
   }
 }

@@ -13,8 +13,8 @@ namespace {
     static float size = 0.f;
     if (size == 0) {
       constexpr float base_size = 9.f;
-      auto monitor = glfwGetPrimaryMonitor();
       int x, y, width, height;
+      auto monitor = glfwGetPrimaryMonitor();
       glfwGetMonitorWorkarea(monitor, &x, &y, &width, &height);
       size = width < 1024 ? base_size : width / 1024.f * base_size;
     }
@@ -51,7 +51,6 @@ namespace cpuRE {
     glfwWindowHint(GLFW_DECORATED, true);
     glfwWindowHint(GLFW_RESIZABLE, true);
     glfwWindowHint(GLFW_REFRESH_RATE, 60);
-
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     window_ = glfwCreateWindow(800, 600, "cpuRE", nullptr, nullptr);
