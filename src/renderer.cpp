@@ -2,20 +2,11 @@
 #include "pipeline/pipeline.h"
 #include "pipeline/viewport.h"
 
-namespace {
-  template <typename T>
-  void alloc_buffer(const glm::ivec2& size, int components, std::unique_ptr<T>& ptr) {
-    ptr.reset(new T[components * size.x * size.y]);
-    memset(ptr.get(), 0, sizeof(T) * components * size.x * size.y);
-  }
-}
-
 namespace cpuRE {
   Renderer::Renderer() : camera_(std::make_shared<Camera>()),
     manipulator_(std::make_shared<Manipulator>()) {
     manipulator_->camera(camera_);
     geometry_ = createTriangleGeometry();
-    // geometry_ = createIcosahedronGeometry();
   }
 
   void Renderer::render() {

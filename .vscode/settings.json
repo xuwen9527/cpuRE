@@ -1,7 +1,7 @@
 {
     "files.autoSave": "afterDelay",
     "editor.detectIndentation": true,
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "selection",
     "editor.tabSize": 2,
     "cmake.configureOnOpen": false,
     "cmake.configureOnEdit": false,
