@@ -47,7 +47,7 @@ namespace cpuRE {
 
     static void run(TriangleBuffer& triangle_buffer, const Geometry& geometry, Context& context) {
       VertexShader shader;
-      auto triangles_num = PrimitiveType::primitives(geometry.indices.size());
+      auto triangles_num = PrimitiveType::primitives(geometry.indices_num);
 
       triangle_buffer.reserve(triangles_num);
 

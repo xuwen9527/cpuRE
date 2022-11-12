@@ -6,7 +6,7 @@
 #include "camera.h"
 #include "manipulator.h"
 #include "framebuffer.h"
-#include "pipeline/geometry.h"
+#include "scene.h"
 #include "pipeline/context.h"
 
 namespace cpuRE {
@@ -19,7 +19,7 @@ namespace cpuRE {
     auto& camera() { return camera_; }
     auto& manipulator() { return manipulator_; }
     auto& framebuffer() { return framebuffer_; }
-    auto& geometry() { return geometry_; }
+    auto& scene() { return scene_; }
     auto& options() { return options_; }
     auto& status() { return status_; }
 
@@ -27,7 +27,7 @@ namespace cpuRE {
     std::shared_ptr<Camera> camera_;
     std::shared_ptr<Manipulator> manipulator_;
 
-    std::shared_ptr<Geometry> geometry_;
+    std::shared_ptr<Scene> scene_;
 
     FrameBuffer framebuffer_;
 

@@ -2,19 +2,14 @@
 #define __GEOMETRY_H__
 
 #include <glm/glm.hpp>
-#include <memory>
-#include <vector>
 
 namespace cpuRE {
   struct Geometry {
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec3> normals;
-    std::vector<float> indices;
+    glm::vec3* vertices;
+    glm::vec3* normals = nullptr;
+    std::uint32_t* indices = nullptr;
+    std::size_t indices_num = 0U;
   };
-
-  std::shared_ptr<Geometry> createTriangleGeometry();
-
-  std::shared_ptr<Geometry> createIcosahedronGeometry();
 }
 
 #endif

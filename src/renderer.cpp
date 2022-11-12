@@ -1,12 +1,38 @@
 #include "renderer.h"
-#include "pipeline/pipeline.h"
+#include "pipeline/primitive_types.h"
+#include "pipeline/shader.h"
 #include "pipeline/viewport.h"
+#include "pipeline/pipeline.h"
 
 namespace cpuRE {
+  using SimplePipeline = Pipeline<SimpleVertexShader, SimpleFragmentShader, TrianglesPrimitiveType>;
+
+  struct RenderVisitor : public Visitor {
+    RenderVisitor(Context& context, Camera& camera) :
+      Visitor(),
+      context_(context),
+      camera_(camera) {}
+
+    void traverse(Mesh& mesh) override {
+      Geometry geometry{
+        mesh.vertices.data(),
+        mesh.normals.data(),
+        mesh.indices.data(),
+        mesh.indices.size()
+      };
+
+      context_.mvp = camera_.mvp() * m.top();
+      SimplePipeline::run(geometry, context_);
+    }
+
+    Context& context_;
+    Camera& camera_;
+  };
+
   Renderer::Renderer() : camera_(std::make_shared<Camera>()),
     manipulator_(std::make_shared<Manipulator>()) {
     manipulator_->camera(camera_);
-    geometry_ = createTriangleGeometry();
+    scene_ = createTriangle();
   }
 
   void Renderer::render() {
@@ -19,7 +45,6 @@ namespace cpuRE {
     framebuffer_.apply();
 
     Context context;
-    context.mvp = camera_->mvp();
     context.viewport = viewport;
     context.pixel_scale = computePixelScale(context.viewport);
     context.color_buffer = framebuffer_.colorBuffer().get();
@@ -27,7 +52,8 @@ namespace cpuRE {
     context.options = options_;
     context.status = status_;
 
-    SimplePipeline::run(*geometry_, context);
+    RenderVisitor visitor(context, *camera_);
+    scene_->accept(visitor);
 
     framebuffer_.updateTexture();
   }

@@ -2,6 +2,7 @@
 #include "external/imgui/imgui.h"
 #include "display.h"
 #include "timer.h"
+#include "visitor.h"
 
 namespace cpuRE {
   Display::Display() : total_time_(0.0), frame_num_(0), framebuffer_scale_(1),
@@ -58,10 +59,10 @@ namespace cpuRE {
       } else if (ImGui::IsKeyDown(ImGuiKey_Escape)) {
 
       } else if (ImGui::IsKeyDown(ImGuiKey_Space)) {
-        BoundingBox box;
-        box.expandBy(renderer_.geometry()->vertices);
-        BoundingSphere sphere(box);
-        auto vp = renderer_.manipulator()->createViewpoint(sphere);
+        BoundingSphereVisitor visitor;
+        renderer_.scene()->accept(visitor);
+
+        auto vp = renderer_.manipulator()->createViewpoint(visitor.sphere);
         renderer_.manipulator()->viewpoint(vp, 2.f);
       }
     }
@@ -280,12 +281,12 @@ namespace cpuRE {
 
           ImGui::TableSetColumnIndex(1);
           ImGui::SetNextItemWidth(-FLT_MIN);
-          ImGui::PushID(renderer_.geometry().get());
+          ImGui::PushID(renderer_.scene().get());
           if (ImGui::Combo("##", &current_geo, items, 2)) {
             if (current_geo == 0) {
-              renderer_.geometry() = createTriangleGeometry();
+              renderer_.scene() = createTriangle();
             } else {
-              renderer_.geometry() = createIcosahedronGeometry();
+              renderer_.scene() = createIcosahedron();
             }
           }
           ImGui::PopID();
