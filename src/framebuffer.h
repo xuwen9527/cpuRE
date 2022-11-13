@@ -27,8 +27,8 @@ namespace cpuRE {
 
   private:
     glm::ivec2 size_;
-    std::unique_ptr<unsigned char> color_buffer_;
-    std::unique_ptr<unsigned short> depth_buffer_;
+    std::unique_ptr<uint8_t> color_buffer_;
+    std::unique_ptr<uint16_t> depth_buffer_;
 
     unsigned int color_texture_id_;
     unsigned int depth_texture_id_;

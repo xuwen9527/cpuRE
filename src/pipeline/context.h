@@ -8,7 +8,7 @@ namespace cpuRE {
     bool draw_bin   = true;
     bool draw_tile  = true;
     bool draw_bounds= false;
-    bool draw_stamp = true;
+    bool draw_pixel = true;
     bool draw_truth = false;
   };
 
@@ -20,8 +20,8 @@ namespace cpuRE {
     glm::mat4 mvp;
     glm::ivec4 viewport;
     glm::vec4 pixel_scale;
-    unsigned char* color_buffer;
-    unsigned short* depth_buffer;
+    uint8_t* color_buffer;
+    uint16_t* depth_buffer;
     Options options;
     Status status;
   };

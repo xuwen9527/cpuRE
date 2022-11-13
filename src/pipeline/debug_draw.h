@@ -22,8 +22,8 @@ namespace cpuRE {
     glm::vec4 color(1.f, 1.f, 1.f, 1.f);
     auto pixel = rastercoordsFromClip(binx, biny, context.viewport);
 
-    auto width = BinTileSpace::BIN_WIDTH;
-    auto height = BinTileSpace::BIN_HEIGHT;
+    auto width = BinTileSpace::BinSize;
+    auto height = BinTileSpace::BinSize;
     if ((pixel.x + width) >= context.viewport.z) {
       width = context.viewport.z - 1 - pixel.x;
     }
@@ -57,8 +57,8 @@ namespace cpuRE {
     glm::vec4 color((tilex + 1.f) * 0.5f, (tiley + 1.f) * 0.5f, 0.f, 1.f);
     auto pixel = rastercoordsFromClip(tilex, tiley, context.viewport);
 
-    auto width = BinTileSpace::StampNumX;
-    auto height = BinTileSpace::StampNumY;
+    auto width = BinTileSpace::TileSize;
+    auto height = BinTileSpace::TileSize;
     if ((pixel.x + width) >= context.viewport.z) {
       width = context.viewport.z - 1 - pixel.x;
     }

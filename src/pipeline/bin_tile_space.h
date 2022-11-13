@@ -5,27 +5,23 @@
 #include "viewport.h"
 
 namespace cpuRE {
-  template <int tile_num_x, int tile_num_y, int stamp_num_x, int stamp_num_y>
-  struct BinTileSpacePattern {
+  struct BinTileSpace {
   public:
-    static constexpr int BIN_WIDTH  = tile_num_x * stamp_num_x;
-    static constexpr int BIN_HEIGHT = tile_num_y * stamp_num_y;
+    static constexpr int TileNum  = 8;
+    static constexpr int TileSize = 8;
 
-    static constexpr int TileNumX  = tile_num_x;
-    static constexpr int TileNumY  = tile_num_y;
-    static constexpr int StampNumX = stamp_num_x;
-    static constexpr int StampNumY = stamp_num_y;
+    static constexpr int BinSize = TileNum * TileSize;
 
     static glm::ivec2 bin(int x, int y) {
-      return { x / BIN_WIDTH, y / BIN_HEIGHT };
+      return { x / BinSize, y / BinSize };
     }
 
     static int left(int i) {
-      return i * BIN_WIDTH;
+      return i * BinSize;
     }
 
     static int top(int j) {
-      return j * BIN_HEIGHT;
+      return j * BinSize;
     }
 
     static int numBins(const glm::ivec2& from, const glm::ivec2& end) {
@@ -33,7 +29,7 @@ namespace cpuRE {
     }
 
     static glm::ivec2 tile(const glm::ivec2& bin, const glm::ivec2& tile) {
-      return { left(bin.x) + tile.x * stamp_num_x, top(bin.y) + tile.y * stamp_num_y };
+      return { left(bin.x) + tile.x * TileSize, top(bin.y) + tile.y * TileSize };
     }
 
     static glm::ivec2 binFromId(int binid, const glm::ivec2& from, const glm::ivec2& end) {
@@ -46,39 +42,39 @@ namespace cpuRE {
       auto y = top(bin.y);
 
       return {
-        glm::clamp((bounds.x - x) / stamp_num_x, 0, tile_num_x - 1),
-        glm::clamp((bounds.y - y) / stamp_num_y, 0, tile_num_y - 1),
-        glm::clamp((bounds.z - x - 1) / stamp_num_x, 0, tile_num_x - 1),
-        glm::clamp((bounds.w - y - 1) / stamp_num_y, 0, tile_num_y - 1),
+        glm::clamp((bounds.x - x) / TileSize, 0, TileNum - 1),
+        glm::clamp((bounds.y - y) / TileSize, 0, TileNum - 1),
+        glm::clamp((bounds.z - x - 1) / TileSize, 0, TileNum - 1),
+        glm::clamp((bounds.w - y - 1) / TileSize, 0, TileNum - 1),
       };
     }
 
-    static glm::ivec4 stampBounds(const glm::ivec2& bin, const glm::ivec2& tile, const glm::ivec4& bounds) {
-      auto x = left(bin.x) + tile.x * stamp_num_x;
-      auto y = top(bin.y)  + tile.y * stamp_num_y;
+    static glm::ivec4 pixelBounds(const glm::ivec2& bin, const glm::ivec2& tile, const glm::ivec4& bounds) {
+      auto x = left(bin.x) + tile.x * TileSize;
+      auto y = top(bin.y)  + tile.y * TileSize;
 
       return {
-        glm::clamp(bounds.x - x, 0, stamp_num_x - 1),
-        glm::clamp(bounds.y - y, 0, stamp_num_y - 1),
-        glm::clamp(bounds.z - x - 1, 0, stamp_num_x - 1),
-        glm::clamp(bounds.w - y - 1, 0, stamp_num_y - 1),
+        glm::clamp(bounds.x - x, 0, TileSize - 1),
+        glm::clamp(bounds.y - y, 0, TileSize - 1),
+        glm::clamp(bounds.z - x - 1, 0, TileSize - 1),
+        glm::clamp(bounds.w - y - 1, 0, TileSize - 1),
       };
     }
 
     struct TransformedBin {
       glm::vec2 start;
-      glm::vec2 stamp_size;
-      glm::vec2 inv_stamp_size;
+      glm::vec2 tile_size;
+      glm::vec2 inv_tile_size;
 
       TransformedBin(int left, int top, const glm::vec4& pixel_scale) :
         start(RasterToClip::point(left, top, pixel_scale)),
-        stamp_size(RasterToClip::vec(stamp_num_x, stamp_num_y, pixel_scale)),
-        inv_stamp_size(1.0f / stamp_size.x, 1.0f / stamp_size.y) {
+        tile_size(RasterToClip::vec(TileSize, TileSize, pixel_scale)),
+        inv_tile_size(1.0f / tile_size.x, 1.0f / tile_size.y) {
       }
 
       int tileFromX(float x) {
-        float diff = (x - start.x) * inv_stamp_size.x;
-        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(tile_num_x));
+        float diff = (x - start.x) * inv_tile_size.x;
+        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(TileNum));
         return h - 1;
       }
     };
@@ -94,9 +90,9 @@ namespace cpuRE {
         inv_fragment_size(1.0f / fragment_size.x, 1.0f / fragment_size.y) {
       }
 
-      int stampFromX(float x, float offset) {
+      int pixelFromX(float x, float offset) {
         float diff = (x - start.x) * inv_fragment_size.x + offset;
-        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(stamp_num_x));
+        int h = 1.f + glm::clamp(diff, -1.f, static_cast<float>(TileSize));
         return h - 1;
       }
     };
@@ -109,13 +105,11 @@ namespace cpuRE {
     static TransformedTile transformTile(const glm::ivec2& bin,
       const glm::ivec2& tile, const glm::vec4& pixel_scale) {
       return TransformedTile(
-        left(bin.x) + tile.x * stamp_num_x,
-        top(bin.y)  + tile.y * stamp_num_y,
+        left(bin.x) + tile.x * TileSize,
+        top(bin.y)  + tile.y * TileSize,
         pixel_scale);
     }
   };
-
-  using BinTileSpace = BinTileSpacePattern<8, 8, 8, 8>;
 }
 
 #endif

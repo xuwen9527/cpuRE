@@ -9,20 +9,16 @@ namespace cpuRE {
 
   struct RenderVisitor : public Visitor {
     RenderVisitor(Context& context, Camera& camera) :
-      Visitor(),
-      context_(context),
-      camera_(camera) {}
+      Visitor(), context_(context), camera_(camera) {}
 
     void traverse(Mesh& mesh) override {
-      Geometry geometry{
+      context_.mvp = camera_.mvp() * m.top();
+      SimplePipeline::run({
         mesh.vertices.data(),
         mesh.normals.data(),
         mesh.indices.data(),
         mesh.indices.size()
-      };
-
-      context_.mvp = camera_.mvp() * m.top();
-      SimplePipeline::run(geometry, context_);
+      }, context_);
     }
 
     Context& context_;

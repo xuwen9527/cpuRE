@@ -8,7 +8,7 @@
 #include "bin_tile_space.h"
 #include "bin_rasterizaion.h"
 #include "tile_rasterizaion.h"
-#include "stamp_shading.h"
+#include "shading.h"
 
 namespace cpuRE {
   template <typename FragmentShader>
@@ -61,16 +61,16 @@ namespace cpuRE {
           int num_tile = tile_mask.count();
           for (int tileid = 0; tileid < num_tile; ++tileid) {
             auto tile = tile_mask.coord(tileid);
-            auto stamp_mask = TileRasterizaion::run(bin, tile, bounds, m, context);
+            auto pixel_mask = TileRasterizaion::run(bin, tile, bounds, m, context);
 
-            if (context.options.draw_stamp) {
-              int num_stamp = stamp_mask.count();
-              for (int stampid = 0; stampid < num_stamp; ++stampid) {
-                auto stamp = stamp_mask.coord(stampid);
+            if (context.options.draw_pixel) {
+              int num_pixel = pixel_mask.count();
+              for (int pixelid = 0; pixelid < num_pixel; ++pixelid) {
+                auto pixel = pixel_mask.coord(pixelid);
                 auto tile_xy = BinTileSpace::tile(bin, tile);
-                auto fragment = tile_xy + stamp;
+                auto fragment = tile_xy + pixel;
 
-                StampShading<FragmentShader>::run(fragment, m, uz, context);
+                Shading<FragmentShader>::run(fragment, m, uz, context);
               }
             }
           }

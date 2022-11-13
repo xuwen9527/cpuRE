@@ -9,7 +9,7 @@
 
 namespace cpuRE {
   struct BinRasterizaion {
-    using TileMask = BitMask<BinTileSpace::TileNumX, BinTileSpace::TileNumY>;
+    using TileMask = BitMask<BinTileSpace::TileNum, BinTileSpace::TileNum>;
 
     static TileMask run(const glm::ivec2& bin, const glm::ivec4& bounds, const glm::mat3& m, Context& context) {
       TileMask tile_mask;
@@ -17,8 +17,8 @@ namespace cpuRE {
       tile_mask.set(tile_bounds.x, tile_bounds.y, tile_bounds.z, tile_bounds.w);
 
       auto bin_space = BinTileSpace::transformBin(bin, context.pixel_scale);
-      constexpr float one_row = (BinTileSpace::StampNumY - 1.f) / BinTileSpace::StampNumY;
-      constexpr float one_col = 1.f / BinTileSpace::StampNumY;
+      constexpr float one_row = (BinTileSpace::TileSize - 1.f) / BinTileSpace::TileSize;
+      constexpr float one_col = 1.f / BinTileSpace::TileSize;
 
       for (auto e = 0; e < 3; ++e) {
         const auto& edge = m[e];
@@ -26,10 +26,10 @@ namespace cpuRE {
 
         int unset_right  = edge.x < 0.f;
         float y_offset = edge.y > 0.f ? one_row : 0.f;
-        float x_offset = edge.x < 0.f ? 0.f : bin_space.stamp_size.x * one_col;
+        float x_offset = edge.x < 0.f ? 0.f : bin_space.tile_size.x * one_col;
 
-        auto y = bin_space.start.y + y_offset * bin_space.stamp_size.y;
-        for (auto row = 0; row < BinTileSpace::TileNumY; ++row, y += bin_space.stamp_size.y) {
+        auto y = bin_space.start.y + y_offset * bin_space.tile_size.y;
+        for (auto row = 0; row < BinTileSpace::TileNum; ++row, y += bin_space.tile_size.y) {
           auto x = (-y * edge.y - edge.z) * invx;
 
           auto col = bin_space.tileFromX(x + x_offset);

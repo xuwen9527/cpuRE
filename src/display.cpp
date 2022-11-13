@@ -189,8 +189,8 @@ namespace cpuRE {
         {
           ImGui::TableSetColumnIndex(0);
           ImGui::SetNextItemWidth(-FLT_MIN);
-          ImGui::PushID(&options.draw_stamp);
-          ImGui::Checkbox("Draw Stamp", &options.draw_stamp);
+          ImGui::PushID(&options.draw_pixel);
+          ImGui::Checkbox("Draw Pixel", &options.draw_pixel);
           ImGui::PopID();
         }
 

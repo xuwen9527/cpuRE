@@ -32,8 +32,8 @@ namespace cpuRE {
 
     if (size_ != size) {
       size_ = size;
-      alloc_buffer<unsigned char>(size_, 4, color_buffer_);
-      alloc_buffer<unsigned short>(size_, 1, depth_buffer_);
+      alloc_buffer<uint8_t>(size_, 4, color_buffer_);
+      alloc_buffer<uint16_t>(size_, 1, depth_buffer_);
     }
 
     updateTexture();

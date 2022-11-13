@@ -1,5 +1,5 @@
-#ifndef __STAMP_SHADING_H__
-#define __STAMP_SHADING_H__
+#ifndef __SHADING_H__
+#define __SHADING_H__
 
 #include <glm/glm.hpp>
 #include "context.h"
@@ -8,7 +8,7 @@
 
 namespace cpuRE {
   template <typename FragmentShader>
-  struct StampShading {
+  struct Shading {
     static void run(const glm::ivec2& fragment, const glm::mat3& m, const glm::vec3& uz, Context& context) {
       auto p = clipcoordsFromRaster(fragment.x, fragment.y, context.pixel_scale);
       auto z = (glm::dot(uz, p) + 1.f) / 2.f;
