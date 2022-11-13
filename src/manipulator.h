@@ -72,7 +72,7 @@ namespace cpuRE {
     void rotate(glm::vec3& axis, float angle);
     void rotate(glm::quat& quat);
 
-    void pan(float dx, float dy, float dz);
+    void pan(const glm::vec3& offset);
 
     void home();
 
@@ -110,8 +110,7 @@ namespace cpuRE {
     float minimumDistance_;
     float maximumDistance_;
 
-    //是否绕center旋转
-    bool rotate_center_;
+    bool rotate_with_camera_;
 
     bool pressed_;
     glm::vec2 last_point_;

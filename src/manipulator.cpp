@@ -125,7 +125,7 @@ namespace cpuRE {
     trackballSize_(6.0f),
     rotate_speed_(15.f),
     pan_speed_(1.f),
-    rotate_center_(false),
+    rotate_with_camera_(true),
     wheelZoomFactor_(0.1f),
     minimumDistance_(0.05f),
     maximumDistance_(300.f),
@@ -194,8 +194,8 @@ namespace cpuRE {
   }
 
   glm::mat4 Manipulator::matrix() {
-    return glm::translate(glm::vec3(0.0, 0.0, -distance_)) *
-           glm::translate(-offset_) *
+    return glm::translate(-offset_) *
+           glm::translate(glm::vec3(0.f, 0.f, -distance_)) *
            glm::mat4_cast(glm::inverse(rotation_)) *
            glm::translate(-center_);
   }
@@ -203,8 +203,8 @@ namespace cpuRE {
   glm::mat4 Manipulator::inverseMatrix() {
     return glm::translate(center_) *
            glm::mat4_cast(rotation_) *
-           glm::translate(offset_) *
-           glm::translate(glm::vec3(0., 0., distance_));
+           glm::translate(glm::vec3(0.f, 0.f, distance_)) *
+           glm::translate(offset_);
   }
 
   void Manipulator::rotate(glm::vec3 &axis, float angle) {
@@ -215,15 +215,11 @@ namespace cpuRE {
     rotation_ *= quat;
   }
 
-  void Manipulator::pan(float dx, float dy, float dz) {
-    if (rotate_center_) {
-      center_.x -= dx;
-      center_.y -= dy;
-      center_.z -= dz;
+  void Manipulator::pan(const glm::vec3& offset) {
+    if (rotate_with_camera_) {
+      center_ -= rotation_ * offset;
     } else {
-      offset_.x -= dx;
-      offset_.y -= dy;
-      offset_.z -= dz;
+      offset_ -= offset;
     }
   }
 
@@ -280,7 +276,7 @@ namespace cpuRE {
       glm::vec2 e = curr_point - last_point_;
       e *= distance_ * tanf(glm::radians(camera_->fov()) / 2.f);
       e *= pan_speed_;
-      pan(e.x, e.y, 0.f);
+      pan({ e.x, e.y, 0.f });
     }
     last_point_ = curr_point;
   }
