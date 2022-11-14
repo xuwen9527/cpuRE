@@ -12,18 +12,24 @@ namespace {
 }
 
 namespace cpuRE {
-  template <unsigned int Rows, unsigned int Cols>
   struct BitMask {
-    static constexpr uint64_t ROW_MASK_PATTERN = (1U << Rows) - 1U;
+  private:
+    static constexpr int RowsBits = 3;
+    static constexpr int ColsBits = 3;
+  public:
+    static constexpr int Rows = 1 << RowsBits;
+    static constexpr int Cols = 1 << ColsBits;
+
+    static constexpr uint64_t RowMask = (1U << Rows) - 1U;
 
     uint64_t mask = 0xFFFFFFFFFFFFFFFFULL;
 
     void set(int lowerX, int lowerY, int upperX, int upperY) {
       upperX = Cols - 1 - upperX;
-      lowerY = lowerY * Rows;
-      upperY = (Rows - 1 - upperY) * Rows;
+      lowerY = lowerY << RowsBits;
+      upperY = (Rows - 1 - upperY) << RowsBits;
 
-      uint64_t row_mask = ((ROW_MASK_PATTERN << lowerX) & ROW_MASK_PATTERN) >> lowerX;
+      uint64_t row_mask = ((RowMask << lowerX) & RowMask) >> lowerX;
       row_mask = row_mask >> upperX << upperX;
       mask = row_mask * 0x0101010101010101ULL;
 
@@ -32,13 +38,13 @@ namespace cpuRE {
 
     void markRow(int row, int col, int revert) {
       uint64_t row_mask = revert ?
-                          (ROW_MASK_PATTERN >> col) :
-                          (ROW_MASK_PATTERN >> col) ^ ROW_MASK_PATTERN;
+                          (RowMask >> col) :
+                          (RowMask >> col) ^ RowMask;
       mask = mask & ~(row_mask << (row * Rows));
     }
 
     bool check(int row, int col) {
-      auto bit = (1ULL << (Rows - 1 - col)) << (row * Cols);
+      auto bit = (1ULL << (Rows - 1 - col)) << (row << ColsBits);
       return bit & mask;
     }
 
@@ -47,14 +53,13 @@ namespace cpuRE {
     }
 
     glm::ivec2 coord(int index) {
-      // find the nth set bit
       index += 1;
-      unsigned int p = 32;
-      for (unsigned int offset = p / 2; offset > 0; offset /= 2)
+      uint32_t p = 32;
+      for (uint32_t offset = p / 2; offset > 0; offset /= 2)
         p = (__popcll(mask >> p) < index) ? (p - offset) : (p + offset);
       p = (__popcll(mask >> p) == index) ? p : p - 1;
 
-      return { Cols - 1U - p % Cols, p / Cols};
+      return { Cols - 1U - (p & (Cols - 1)), p >> ColsBits};
     }
   };
 }

@@ -66,9 +66,9 @@ namespace cpuRE {
             if (context.options.draw_pixel) {
               int num_pixel = pixel_mask.count();
               for (int pixelid = 0; pixelid < num_pixel; ++pixelid) {
-                auto pixel = pixel_mask.coord(pixelid);
-                auto tile_xy = BinTileSpace::tile(bin, tile);
-                auto fragment = tile_xy + pixel;
+                auto fragment = pixel_mask.coord(pixelid);
+                fragment.x += BinTileSpace::tileLeft(bin, tile);
+                fragment.y += BinTileSpace::tileTop (bin, tile);
 
                 Shading<FragmentShader>::run(fragment, m, uz, context);
               }

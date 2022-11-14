@@ -10,11 +10,9 @@
 
 namespace cpuRE {
   struct TileRasterizaion {
-    using PixelMask = BitMask<BinTileSpace::TileSize, BinTileSpace::TileSize>;
-
-    static PixelMask run(const glm::ivec2& bin, const glm::ivec2& tile,
-                         const glm::ivec4& bounds, const glm::mat3& m, Context& context) {
-      PixelMask pixel_mask;
+    static BitMask run(const glm::ivec2& bin, const glm::ivec2& tile,
+                       const glm::ivec4& bounds, const glm::mat3& m, Context& context) {
+      BitMask pixel_mask;
       auto pixel_bounds = BinTileSpace::pixelBounds(bin, tile, bounds);
       pixel_mask.set(pixel_bounds.x, pixel_bounds.y, pixel_bounds.z, pixel_bounds.w);
 
