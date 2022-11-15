@@ -20,11 +20,11 @@ namespace cpuRE {
       return { x >> BinSizeBits, y >> BinSizeBits };
     }
 
-    static int left(int i) {
+    static int binLeft(int i) {
       return i << BinSizeBits;
     }
 
-    static int top(int j) {
+    static int binTop(int j) {
       return j << BinSizeBits;
     }
 
@@ -33,11 +33,11 @@ namespace cpuRE {
     }
 
     static int tileLeft(const glm::ivec2& bin, const glm::ivec2& tile) {
-      return left(bin.x) + (tile.x << TileSizeBits);
+      return binLeft(bin.x) + (tile.x << TileSizeBits);
     }
 
     static int tileTop(const glm::ivec2& bin, const glm::ivec2& tile) {
-      return top(bin.y) + (tile.y << TileSizeBits);
+      return binTop(bin.y) + (tile.y << TileSizeBits);
     }
 
     static glm::ivec2 binFromId(int binid, const glm::ivec2& from, const glm::ivec2& end) {
@@ -46,8 +46,8 @@ namespace cpuRE {
     }
 
     static glm::ivec4 tileBounds(const glm::ivec2& bin, const glm::ivec4& bounds) {
-      auto x = left(bin.x);
-      auto y = top(bin.y);
+      auto x = binLeft(bin.x);
+      auto y = binTop(bin.y);
 
       return {
         glm::clamp((bounds.x - x) >> TileSizeBits, 0, TileNum - 1),
@@ -74,8 +74,8 @@ namespace cpuRE {
       glm::vec2 inv_tile_size;
 
       TransformedBin(int left, int top, const glm::vec4& pixel_scale) :
-        start(RasterToClip::point(left, top, pixel_scale)),
-        tile_size(RasterToClip::vec(TileSize, TileSize, pixel_scale)),
+        start(clipcoords2DFromRaster(left, top, pixel_scale)),
+        tile_size(clipvecFromRaster(TileSize, TileSize, pixel_scale)),
         inv_tile_size(1.0f / tile_size.x, 1.0f / tile_size.y) {
       }
 
@@ -92,8 +92,8 @@ namespace cpuRE {
       glm::vec2 inv_fragment_size;
 
       TransformedTile(int left, int top, const glm::vec4& pixel_scale) :
-        start(RasterToClip::point(left, top, pixel_scale)),
-        fragment_size(RasterToClip::vec(1.f, 1.f, pixel_scale)),
+        start(clipcoords2DFromRaster(left, top, pixel_scale)),
+        fragment_size(clipvecFromRaster(1, 1, pixel_scale)),
         inv_fragment_size(1.0f / fragment_size.x, 1.0f / fragment_size.y) {
       }
 
@@ -106,7 +106,7 @@ namespace cpuRE {
 
     static TransformedBin transformBin(const glm::ivec2& bin,
       const glm::vec4& pixel_scale) {
-      return TransformedBin(left(bin.x), top(bin.y), pixel_scale);
+      return TransformedBin(binLeft(bin.x), binTop(bin.y), pixel_scale);
     }
 
     static TransformedTile transformTile(const glm::ivec2& bin,

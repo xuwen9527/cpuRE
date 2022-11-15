@@ -17,6 +17,14 @@ namespace cpuRE {
     return { x * pixel_scale.x + pixel_scale.z, y * pixel_scale.y + pixel_scale.w, 1.0f };
   }
 
+  static glm::vec2 clipcoords2DFromRaster(int x, int y, const glm::vec4& pixel_scale) {
+    return { x * pixel_scale.x + pixel_scale.z, y * pixel_scale.y + pixel_scale.w };
+  }
+
+  static glm::vec2 clipvecFromRaster(int x, int y, const glm::vec4& pixel_scale) {
+    return { x * pixel_scale.x, y * pixel_scale.y };
+  }
+
   static glm::ivec2 rastercoordsFromClip(float x, float y, const glm::vec4& viewport) {
     return { (x + 1.0f) * 0.5f * viewport.z + viewport.x, (y + 1.0f) * 0.5f * viewport.w + viewport.y };
   }
@@ -35,16 +43,6 @@ namespace cpuRE {
       ceil (x_min - 0.5f), ceil (y_min - 0.5f),
       floor(x_max + 0.5f), floor(y_max + 0.5f));
   }
-
-  struct RasterToClip {
-    static glm::vec2 point(float x, float y, const glm::vec4& pixel_scale) {
-      return { x * pixel_scale.x + pixel_scale.z, y * pixel_scale.y + pixel_scale.w };
-    }
-
-    static glm::vec2 vec(float x, float y, const glm::vec4& pixel_scale) {
-      return { x * pixel_scale.x, y * pixel_scale.y };
-    }
-  };
 }
 
 #endif
