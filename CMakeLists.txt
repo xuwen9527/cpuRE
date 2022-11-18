@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(cpuRE VERSION 0.1.0)
 
+enable_language(CUDA)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,10 +25,17 @@ find_package(glfw3 CONFIG REQUIRED)
 
 include_directories(thirdparty)
 
-file(GLOB_RECURSE SRCS src/*.cpp src/*.c src/*.h)
+file(GLOB_RECURSE SRCS src/*.cpp src/*.c src/*.h src/*.cu src/*.cuh)
 add_executable(${PROJECT_NAME} ${SRCS})
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  set(CMAKE_CUDA_FLAGS_DEBUG "-G")
+endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "61")
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 build_command(BUILD_COMMAND_LINE CONFIGURATION ${CMAKE_BUILD_TYPE} TARGET ALL_BUILD)
 message(STATUS "Using compiler ${CMAKE_CXX_COMPILER}")
