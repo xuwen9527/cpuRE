@@ -34,6 +34,8 @@ if (CMAKE_BUILD_TYPE STREQUAL Debug)
   set(CMAKE_CUDA_FLAGS_DEBUG "-G")
 endif()
 
+set(CMAKE_CUDA_FLAGS "-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored --expt-relaxed-constexpr")
+
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "61")
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
