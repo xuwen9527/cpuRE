@@ -25,7 +25,7 @@ include_directories(thirdparty)
 
 file(GLOB_RECURSE SRCS src/*.cpp src/*.c src/*.h)
 add_executable(${PROJECT_NAME} ${SRCS})
-target_link_libraries(${PROJECT_NAME} glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 build_command(BUILD_COMMAND_LINE CONFIGURATION ${CMAKE_BUILD_TYPE} TARGET ALL_BUILD)
