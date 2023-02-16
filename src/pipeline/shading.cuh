@@ -2,13 +2,14 @@
 #define __SHADING_H__
 
 #include <glm/glm.hpp>
-#include "context.h"
-#include "buffer_io.h"
-#include "viewport.h"
+#include "context.cuh"
+#include "buffer_io.cuh"
+#include "viewport.cuh"
 
 namespace cpuRE {
   template <typename FragmentShader>
   struct Shading {
+    __device__
     static void run(const glm::ivec2& fragment, const glm::mat3& m, const glm::vec3& uz, Context& context) {
       auto p = clipcoordsFromRaster(fragment.x, fragment.y, context.pixel_scale);
       auto z = (glm::dot(uz, p) + 1.f) / 2.f;

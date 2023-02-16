@@ -1,8 +1,8 @@
 #include "renderer.h"
-#include "pipeline/primitive_types.h"
-#include "pipeline/shader.h"
-#include "pipeline/viewport.h"
-#include "pipeline/pipeline.h"
+#include "pipeline/primitive_types.cuh"
+#include "pipeline/shader.cuh"
+#include "pipeline/viewport.cuh"
+#include "pipeline/pipeline.cuh"
 
 namespace cpuRE {
   using SimplePipeline = Pipeline<SimpleVertexShader, SimpleFragmentShader, TrianglesPrimitiveType>;

@@ -38,6 +38,7 @@ set(CMAKE_CUDA_FLAGS "-Xcudafe --diag_suppress=esa_on_defaulted_function_ignored
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "61")
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 build_command(BUILD_COMMAND_LINE CONFIGURATION ${CMAKE_BUILD_TYPE} TARGET ALL_BUILD)
 message(STATUS "Using compiler ${CMAKE_CXX_COMPILER}")

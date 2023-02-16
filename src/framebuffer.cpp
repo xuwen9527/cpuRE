@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include "framebuffer.h"
-#include "pipeline/buffer_io.h"
+#include "pipeline/buffer_io.cuh"
 
 namespace {
   template <typename T>

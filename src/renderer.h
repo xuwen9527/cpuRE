@@ -7,7 +7,7 @@
 #include "manipulator.h"
 #include "framebuffer.h"
 #include "scene.h"
-#include "pipeline/context.h"
+#include "pipeline/context.cuh"
 
 namespace cpuRE {
   class Renderer {
